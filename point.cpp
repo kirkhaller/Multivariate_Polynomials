@@ -5,8 +5,8 @@
 #include "point.h"
 #include <cassert>
 
-Point::Point() {
-
+Point::Point(const point_t &point_in) {
+    value = point_t(point_in);
 }
 
 std::string Point::description() const {
@@ -18,9 +18,9 @@ std::string Point::description() const {
     return string_out;
 }
 
-int Point::get_value(const int index) const {
-    assert(index > 0 && index < dimension()); // Mismatched Dimensions
-    return 0;
+double Point::get_value(const int index) const {
+    assert(index >= 0 && index < dimension()); // Mismatched Dimensions
+    return value[index];
 }
 
 double Point::power(Multi_index &exponent) const {

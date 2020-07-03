@@ -7,18 +7,24 @@
 #include <math.h>
 #include "Multiindex.h"
 #include <string>
+#include <vector>
 
 #define d_point_tolerance 0.000000001
+#define point_t std::vector<double>
 
 class Point {
-    Point();
+
+private:
+    point_t value;
+
+public:
+    Point(const point_t &point_in);
 
     std::string description() const;
 
-public:
-    int dimension() const { return -1; }
+    inline int dimension() const { return value.size(); }
 
-    int get_value(const int index) const;
+    double get_value(const int index) const;
 
     double power(Multi_index &exponent) const;
 };
