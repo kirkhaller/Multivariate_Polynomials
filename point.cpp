@@ -12,8 +12,11 @@ Point::Point(const point_t &point_in) {
 std::string Point::description() const {
     assert(dimension() > 0 && "Dimension of a Point needs to be > 0");
     std::string string_out = "( ";
-    for (int index = 0; index < dimension(); index++)
+    for (int index = 0; index < dimension()-1; index++) {
         string_out += std::to_string(get_value(index));
+        string_out += ", ";
+    }
+    string_out += std::to_string(get_value(dimension()-1));
     string_out += " )";
     return string_out;
 }

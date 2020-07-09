@@ -7,21 +7,38 @@
 
 #include <cassert>
 #include <string>
+#include <vector>
+
+#define m_index_t std::vector<int>
 
 class Multi_index {
-    Multi_index();
+
+private:
+    m_index_t m_index;
+    int degree;
+
+public:
+    Multi_index(const m_index_t &index_in);
 
     std::string description() const;
 
-public:
-    int dimension() const { return -1; };
+    int dimension() const { return m_index.size(); };
 
     int get_value(const int index) const;
+
+    int get_degree() const;
 };
 
 inline bool operator==(const Multi_index &lhs, const Multi_index &rhs) {
-    // Need to implement
-    return false;
+    if (lhs.dimension() != rhs.dimension())
+        return false;
+
+    for (int index=0; index < lhs.dimension(); index++) {
+        if (lhs.get_value(index) != rhs.get_value(index))
+            return false;
+    }
+
+    return true; // lhs and rhs must be equal
 }
 
 inline bool operator!=(const Multi_index &lhs, const Multi_index &rhs) {
@@ -29,7 +46,11 @@ inline bool operator!=(const Multi_index &lhs, const Multi_index &rhs) {
 }
 
 inline bool operator<(const Multi_index &lhs, const Multi_index &rhs) {
-    assert(lhs.dimension() == rhs.dimension() && "Mismatched Dimensions.");
+    assert(lhs.dimension() == rhs.dimension() && "Mismatched Dimensions");
+
+    if (lhs.get_degree() < rhs.get_degree())
+        return true;
+
     for (int index = 0; index < lhs.dimension(); index++) {
         int lhs_value = lhs.get_value(index);
         int rhs_value = rhs.get_value(index);
@@ -37,7 +58,7 @@ inline bool operator<(const Multi_index &lhs, const Multi_index &rhs) {
             return lhs_value < rhs_value;
         }
     }
-    return false; // The operators must be equal
+    return false; // The operators must be equal so lsh < rhs is false
 }
 
 #endif //MULTIVARIATE_POLYNOMIALS_MULTIINDEX_H
