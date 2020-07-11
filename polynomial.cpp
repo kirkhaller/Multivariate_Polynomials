@@ -50,10 +50,10 @@ double Polynomial::evaluate(const Point &point) const {
 
 Polynomial Polynomial::multiply_by_monomial(Multi_index index, double coeff) {
     Polynomial poly_out;
-    for (const auto term : coefficients) {
+    for (const auto &term : coefficients) {
         poly_out[term.first + index] = coeff * term.second;
     }
-    return Polynomial(poly_out);
+    return poly_out;
 }
 
 Polynomial Polynomial::derivative(int direction) const {
@@ -62,7 +62,7 @@ Polynomial Polynomial::derivative(int direction) const {
 
     Polynomial derivative;
     Multi_index dir(coefficients.end()->first.dimension(), direction);
-    for (const auto term: coefficients) {
+    for (const auto &term: coefficients) {
         if (term.first.is_valid_for_subtraction(dir)) {
             derivative[term.first - dir] = term.second * term.first.get_value(direction);
         }
@@ -73,5 +73,15 @@ Polynomial Polynomial::derivative(int direction) const {
 double &Polynomial::operator[](Multi_index index) {
     assert((coefficients.empty() || dimension() == index.dimension()) && "Mismatched dimension");
     return coefficients[index];
+}
+
+Polynomial Polynomial::operator+(const Polynomial &rhs) const {
+    Polynomial poly_out(*this);
+
+    for (const auto &term: rhs.coefficients) {
+        poly_out[term.first] += term.second;
+    }
+
+    return poly_out;
 }
 
