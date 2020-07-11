@@ -26,7 +26,7 @@ public:
 
     double get_value(const int index) const;
 
-    double power(Multi_index &exponent) const;
+    double power(const Multi_index &exponent) const;
 };
 
 inline bool operator==(const Point &lhs, const Point &rhs) {

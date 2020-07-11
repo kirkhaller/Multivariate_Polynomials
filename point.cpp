@@ -26,7 +26,7 @@ double Point::get_value(const int index) const {
     return value[index];
 }
 
-double Point::power(Multi_index &exponent) const {
+double Point::power(const Multi_index &exponent) const {
     assert(dimension() == exponent.dimension() && "Mismatched Dimensions");
     double value_out = 0;
     for (int index = 0; index < dimension(); index++) {
