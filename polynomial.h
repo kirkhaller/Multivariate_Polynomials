@@ -40,7 +40,6 @@ public:
 class Polynomial {
 private:
     std::map<Multi_index, double> coefficients;
-    int degree = 0;
 
 public:
     Polynomial() {
@@ -48,7 +47,6 @@ public:
     }
 
     Polynomial(const Polynomial &poly_in) {
-        degree = poly_in.get_degree();
         coefficients = std::map<Multi_index, double>(poly_in.coefficients.begin(), poly_in.coefficients.end());
     }
 
