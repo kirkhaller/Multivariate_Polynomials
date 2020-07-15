@@ -73,12 +73,12 @@ public:
     Polynomial derivative(int direction) const;
 
     // operator assignments
-    double &operator[](Multi_index index);
+    double &operator[](Multi_index &index);
 
     Polynomial operator+(const Polynomial &rhs) const;
 
 private:
-    Polynomial multiply_by_monomial(Multi_index index, double coeff);
+    Polynomial multiply_by_monomial(Multi_index &index, double coeff);
 };
 
 

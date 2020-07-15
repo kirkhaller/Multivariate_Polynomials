@@ -42,10 +42,10 @@ double Polynomial::evaluate(const Point &point) const {
     return value_out.value();
 }
 
-Polynomial Polynomial::multiply_by_monomial(Multi_index index, double coeff) {
+Polynomial Polynomial::multiply_by_monomial(Multi_index &index, double coefficient) {
     Polynomial poly_out;
     for (const auto &term : coefficients) {
-        poly_out[term.first + index] = coeff * term.second;
+        poly_out[term.first + index] = coefficient * term.second;
     }
     return poly_out;
 }
@@ -64,7 +64,7 @@ Polynomial Polynomial::derivative(int direction) const {
     return derivative;
 }
 
-double &Polynomial::operator[](Multi_index index) {
+double &Polynomial::operator[](Multi_index &index) {
     assert((coefficients.empty() || dimension() == index.dimension()) && "Mismatched dimension");
     return coefficients[index];
 }
