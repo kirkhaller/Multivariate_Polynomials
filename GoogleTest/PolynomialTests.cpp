@@ -16,6 +16,9 @@ namespace {
             Multi_index index_100({1, 0, 0});
             Multi_index index_010({0, 1, 0});
             Multi_index index_001({0, 0, 1});
+            Multi_index index_101({1, 0, 1});
+            Multi_index index_011({0, 1, 1});
+            Multi_index index_002({0, 0, 2});
 
             poly1d[index1d] = 1;
 
@@ -28,9 +31,9 @@ namespace {
             poly3db[index_100] = 6;
             poly3db[index_010] = 7;
             poly3db[index_001] = 8;
-            poly3db[index_100 + index_001] = 9;
-            poly3db[index_010 + index_001] = 10;
-            poly3db[index_001 + index_001] = 11;
+            poly3db[index_101] = 9;
+            poly3db[index_011] = 10;
+            poly3db[index_002] = 11;
         }
     };
 

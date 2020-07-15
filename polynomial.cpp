@@ -45,7 +45,8 @@ double Polynomial::evaluate(const Point &point) const {
 Polynomial Polynomial::multiply_by_monomial(Multi_index &index, double coefficient) {
     Polynomial poly_out;
     for (const auto &term : coefficients) {
-        poly_out[term.first + index] = coefficient * term.second;
+        Multi_index shifted_multi_index = term.first + index;
+        poly_out[shifted_multi_index] = coefficient * term.second;
     }
     return poly_out;
 }
@@ -58,7 +59,8 @@ Polynomial Polynomial::derivative(int direction) const {
     Multi_index dir(coefficients.end()->first.dimension(), direction);
     for (const auto &term: coefficients) {
         if (term.first.is_valid_for_subtraction(dir)) {
-            derivative[term.first - dir] = term.second * term.first.get_value(direction);
+            Multi_index shifted_multi_index = term.first - dir;
+            derivative[shifted_multi_index] = term.second * term.first.get_value(direction);
         }
     }
     return derivative;
@@ -73,7 +75,8 @@ Polynomial Polynomial::operator+(const Polynomial &rhs) const {
     Polynomial poly_out(*this);
 
     for (const auto &term: rhs.coefficients) {
-        poly_out[term.first] += term.second;
+        Multi_index exponent(term.first);
+        poly_out[exponent] += term.second;
     }
 
     return poly_out;
