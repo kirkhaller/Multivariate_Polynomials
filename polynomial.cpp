@@ -23,11 +23,9 @@ void KBNSum::add(double value_in) {
 }
 
 bool Polynomial::is_zero() const {
-    if (std::any_of(coefficients.begin(), coefficients.end(),
-                    [](const auto &term) { return abs(term.second) > d_polynomial_coefficient_tol; }))
-        return false;
+    return !std::any_of(coefficients.begin(), coefficients.end(),
+                        [](const auto &term) { return abs(term.second) > d_polynomial_coefficient_tol; });
 
-    return true;
 }
 
 double Polynomial::evaluate(const Point &point) const {

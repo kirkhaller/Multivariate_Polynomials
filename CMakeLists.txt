@@ -3,8 +3,6 @@ project(Multivariate_Polynomials)
 
 set(CMAKE_CXX_STANDARD 14)
 
-find_package(absl REQUIRED)
-
 # 'lib' is the folder with Google Test sources
 add_subdirectory(GoogleTest/lib)
 include_directories(include ${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
