@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 3.16)
 project(Multivariate_Polynomials)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
+
+find_package(absl REQUIRED)
 
 # 'lib' is the folder with Google Test sources
 add_subdirectory(GoogleTest/lib)
-include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
-
+include_directories(include ${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
 add_library(Multivariate_Polynomials point.cpp point.h Multiindex.cpp Multiindex.h polynomial.cpp polynomial.h)
 

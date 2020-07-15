@@ -5,11 +5,12 @@
 #ifndef MULTIVARIATE_POLYNOMIALS_POLYNOMIAL_H
 #define MULTIVARIATE_POLYNOMIALS_POLYNOMIAL_H
 
-#include <map>
+#include "absl/container/btree_map.h"
 #include "Multiindex.h"
 #include "point.h"
 
 #define d_polynomial_coefficient_tol 0.00000000001
+#define coefficient_t absl::btree_map<Multi_index, double>
 
 class KBNSum {
 private:
@@ -39,15 +40,15 @@ public:
 
 class Polynomial {
 private:
-    std::map<Multi_index, double> coefficients;
+    coefficient_t coefficients;
 
 public:
     Polynomial() {
-        coefficients = std::map<Multi_index, double>();
+        coefficients = coefficient_t();
     }
 
     Polynomial(const Polynomial &poly_in) {
-        coefficients = std::map<Multi_index, double>(poly_in.coefficients.begin(), poly_in.coefficients.end());
+        coefficients = coefficient_t(poly_in.coefficients.begin(), poly_in.coefficients.end());
     }
 
     int get_degree() const {
