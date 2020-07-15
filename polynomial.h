@@ -78,7 +78,7 @@ public:
     Polynomial operator+(const Polynomial &rhs) const;
 
 private:
-    Polynomial multiply_by_monomial(Multi_index &index, double coeff);
+    Polynomial multiply_by_monomial(Multi_index &index, double coefficient);
 };
 
 
