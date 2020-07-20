@@ -13,7 +13,9 @@ Multi_index::Multi_index(const m_index_t &index_in) {
 
     // TODO: check that values are all non-negative
     for (int index = 0; index < dimension(); index++) {
-        assert(get_value(index) >= 0 && "Indices must be non-negative");
+        if (get_value(index) < 0) {
+            throw std::invalid_argument("Multi Indices must be non-negative.");
+        }
     }
 
     // sum the values of m_index to calculate the degree of the monomial represented by m_index
@@ -21,7 +23,9 @@ Multi_index::Multi_index(const m_index_t &index_in) {
 }
 
 Multi_index::Multi_index(int dimension, int index) {
-    assert(dimension > index && index > 0 && "Bad unit vector request.");
+    if (dimension < index || index < 0) {
+        throw std::out_of_range("Index out of bounds.");
+    }
 
     m_index = m_index_t(dimension, 0);
     m_index[index] = 1;
@@ -29,7 +33,6 @@ Multi_index::Multi_index(int dimension, int index) {
 }
 
 std::string Multi_index::description() const {
-    assert(dimension() > 0 && "Mismatched Dimensions");
 
     std::string string_out = "( ";
     for (int index = 0; index < dimension() - 1; index++) {
@@ -42,7 +45,9 @@ std::string Multi_index::description() const {
 }
 
 int Multi_index::get_value(const int index) const {
-    assert(index >= 0 && index < dimension() && "Index is out of bounds");
+    if (dimension() < index || index < 0) {
+        throw std::out_of_range("Index out of bounds.");
+    }
     return m_index[index];
 }
 
@@ -51,7 +56,9 @@ int Multi_index::get_degree() const {
 }
 
 Multi_index Multi_index::operator+(const Multi_index &rhs) const {
-    assert(dimension() == rhs.dimension() && "Mismatched Multi_index dimensions.");
+    if (dimension() != rhs.dimension()) {
+        throw std::invalid_argument("Mismatched Multi_index dimensions.");
+    }
     m_index_t index_out(m_index);
 
     for (int dim = 0; dim < dimension(); dim++) {
@@ -75,12 +82,15 @@ bool Multi_index::is_valid_for_subtraction(const Multi_index &rhs) const {
 }
 
 Multi_index Multi_index::operator-(const Multi_index &rhs) const {
-    assert(dimension() == rhs.dimension() && "Mismatched Multi_index dimensions.");
+    if (dimension() != rhs.dimension()) {
+        throw std::invalid_argument("Mismatched Multi_index dimensions.");
+    }
     m_index_t index_out(m_index);
 
     for (int dim = 0; dim < dimension(); dim++) {
         index_out[dim] -= rhs.get_value(dim);
-        assert(index_out[dim] >= 0 && "don't allow negative multi_indexes.");
+        if (index_out[dim] < 0)
+            throw std::range_error("don't allow negative multi_indexes.");
     }
 
     return Multi_index(index_out);

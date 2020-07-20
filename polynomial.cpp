@@ -7,11 +7,6 @@
 
 KBNSum::KBNSum(double value_in) : sum(value_in), error_sum(0.0) {}
 
-KBNSum::KBNSum(const KBNSum &sum_in) {
-    sum = sum_in.sum;
-    error_sum = sum_in.error_sum;
-}
-
 void KBNSum::add(double value_in) {
     double new_sum = sum + value_in;
     if (abs(sum) > abs(value_in)) {
@@ -64,9 +59,12 @@ Polynomial Polynomial::derivative(int direction) const {
     return derivative;
 }
 
-double &Polynomial::operator[](Multi_index &index) {
-    assert((coefficients.empty() || dimension() == index.dimension()) && "Mismatched dimension");
-    return coefficients[index];
+double Polynomial::get_coefficient(const Multi_index &exponent) const {
+    auto found = coefficients.find(exponent);
+    if (found == coefficients.end()) {
+        return 0;
+    }
+    return found->second;
 }
 
 Polynomial Polynomial::operator+(const Polynomial &rhs) const {

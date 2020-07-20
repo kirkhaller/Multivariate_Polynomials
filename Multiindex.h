@@ -18,6 +18,8 @@ private:
     int degree;
 
 public:
+    Multi_index() : degree(-1), m_index({}) {};
+
     Multi_index(const m_index_t &index_in);
 
     // Returns the unit vector (0,..,0,1,0,...0) with the 1 in the indicated index.
@@ -36,6 +38,11 @@ public:
     bool is_valid_for_subtraction(const Multi_index &rhs) const;
 
     Multi_index operator-(const Multi_index &rhs) const;
+
+    void operator=(const Multi_index &rhs) {
+        degree = rhs.degree;
+        m_index = rhs.m_index;
+    }
 };
 
 inline bool operator==(const Multi_index &lhs, const Multi_index &rhs) {
@@ -55,7 +62,9 @@ inline bool operator!=(const Multi_index &lhs, const Multi_index &rhs) {
 }
 
 inline bool operator<(const Multi_index &lhs, const Multi_index &rhs) {
-    assert(lhs.dimension() == rhs.dimension() && "Mismatched Dimensions");
+    if (lhs.dimension() != rhs.dimension()) {
+        throw std::invalid_argument("Mismatched multi index Dimensions");
+    }
 
     if (lhs.get_degree() < rhs.get_degree())
         return true;

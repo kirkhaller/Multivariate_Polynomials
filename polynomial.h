@@ -20,11 +20,9 @@ private:
 public:
     explicit KBNSum(double value_in);
 
-    KBNSum(const KBNSum &sum_in);
-
     void add(double value_in);
 
-    void add(const KBNSum sum_in) {
+    void add(const KBNSum &sum_in) {
         add(sum_in.sum);
         add(sum_in.error_sum);
     }
@@ -41,6 +39,7 @@ public:
 class Polynomial {
 private:
     coefficient_t coefficients;
+    double zero = 0;
 
 public:
     Polynomial() {
@@ -49,6 +48,10 @@ public:
 
     Polynomial(const Polynomial &poly_in) {
         coefficients = coefficient_t(poly_in.coefficients.begin(), poly_in.coefficients.end());
+    }
+
+    int get_size() const {
+        return coefficients.size();
     }
 
     int get_degree() const {
@@ -73,9 +76,52 @@ public:
     Polynomial derivative(int direction) const;
 
     // operator assignments
-    double &operator[](Multi_index &index);
+    Polynomial operator+(const Polynomial &rh) const;
 
-    Polynomial operator+(const Polynomial &rhs) const;
+    // A structure to allow get/set using the bracket operator.
+    // Thanks to: andreagriffini.com
+    struct PolynomialBracketProxy {
+        Polynomial &poly;
+        Multi_index &index;
+
+        PolynomialBracketProxy(Polynomial &poly_in, Multi_index &index_in) : poly(poly_in), index(index_in) {}
+
+        //This is the get operator
+        operator double() {
+            return poly.get_coefficient(index);
+        }
+
+        //This is the set operator
+        double &operator=(const double value) {
+            return poly.set_coefficient(index, value);
+        }
+
+        // This is a helper function
+        double &operator+=(const double value) {
+            KBNSum sum(value);
+            double poly_coefficient = poly.get_coefficient(index);
+            sum.add(poly_coefficient);
+            return poly.set_coefficient(index, sum.value());
+        }
+
+        bool operator==(const double rhs_value) const {
+            double poly_coefficient = poly.get_coefficient(index);
+            return poly_coefficient == rhs_value;
+        }
+    };
+
+    PolynomialBracketProxy operator[](Multi_index &index) {
+        return PolynomialBracketProxy(*this, index);
+    }
+
+    // These functions are added for testing, and to make the implimentation of the PolyBracketProxy cleaner.
+    double &set_coefficient(const Multi_index &exponent, double coefficient) {
+        if (!coefficients.empty() && coefficients.begin()->first.dimension() != exponent.dimension())
+            throw std::invalid_argument("Exponent's dimensions mismatch rest of polynomial.");
+        return coefficients[exponent] = coefficient;
+    }
+
+    double get_coefficient(const Multi_index &exponent) const;
 
 private:
     Polynomial multiply_by_monomial(Multi_index &index, double coefficient);

@@ -4,38 +4,65 @@
 
 #include "gtest/gtest.h"
 #include "../polynomial.h"
+#include <vector>
 
 namespace {
     class PolynomialTest : public ::testing::Test {
     public:
         Polynomial poly1d, poly3da, poly3db;
+        Multi_index index1d, index_000, index_100, index_010, index_001;
+        Multi_index index_200, index_110, index_101, index_020, index_011, index_002;
 
         void SetUp() override {
-            Multi_index index1d({3});
-            Multi_index index_000({0, 0, 0});
-            Multi_index index_100({1, 0, 0});
-            Multi_index index_010({0, 1, 0});
-            Multi_index index_001({0, 0, 1});
-            Multi_index index_101({1, 0, 1});
-            Multi_index index_011({0, 1, 1});
-            Multi_index index_002({0, 0, 2});
 
-            poly1d[index1d] = 1;
+            index1d = Multi_index({3});
+            index_000 = Multi_index({0, 0, 0});
+            index_100 = Multi_index({1, 0, 0});
+            index_010 = Multi_index({0, 1, 0});
+            index_001 = Multi_index({0, 0, 1});
+            index_200 = Multi_index({2, 0, 0});
+            index_110 = Multi_index({1, 1, 0});
+            index_101 = Multi_index({1, 0, 1});
+            index_020 = Multi_index({0, 2, 0});
+            index_011 = Multi_index({0, 1, 1});
+            index_002 = Multi_index({0, 0, 2});
 
-            poly3da[index_000] = 1;
-            poly3da[index_100] = 2;
-            poly3da[index_010] = 3;
-            poly3da[index_001] = 4;
+            poly1d.set_coefficient(index1d, 1);
 
-            poly3db[index_000] = 5;
-            poly3db[index_100] = 6;
-            poly3db[index_010] = 7;
-            poly3db[index_001] = 8;
-            poly3db[index_101] = 9;
-            poly3db[index_011] = 10;
-            poly3db[index_002] = 11;
+            poly3da.set_coefficient(index_000, 1);
+            poly3da.set_coefficient(index_100, 2);
+            poly3da.set_coefficient(index_010, 3);
+            poly3da.set_coefficient(index_001, 4);
+
+            poly3db.set_coefficient(index_000, 5);
+            poly3db.set_coefficient(index_100, 6);
+            poly3db.set_coefficient(index_010, 7);
+            poly3db.set_coefficient(index_001, 8);
+            poly3db.set_coefficient(index_101, 9);
+            poly3db.set_coefficient(index_011, 10);
+            poly3db.set_coefficient(index_002, 11);
         }
     };
+
+    TEST_F(PolynomialTest, TestBracketOperators) {
+        int size = poly3da.get_size();
+
+        double value = poly3da[index_000];
+        EXPECT_EQ(value, 1);
+        value = poly3da[index_200];
+        EXPECT_EQ(value, 0);
+        EXPECT_EQ(poly3da.get_size(), size);
+        poly3da[index_200] = 200.0;
+        EXPECT_EQ(poly3da[index_200], 200.0);
+        EXPECT_EQ(poly3da.get_size(), (double) size + 1);
+        EXPECT_ANY_THROW(value = poly3da[index1d]);
+        size = poly3da.get_size();
+        double test_value = poly3da[index_020];
+        EXPECT_EQ(test_value, 0);
+        test_value = 20;
+        EXPECT_EQ(poly3da[index_020], 0);
+        EXPECT_EQ(poly3da.get_size(), size);
+    }
 
     TEST_F(PolynomialTest, TestDimensionDegree) {
         Polynomial zero_poly;
@@ -50,7 +77,7 @@ namespace {
         EXPECT_EQ(poly3db.dimension(), 3);
 
         Multi_index alpha31(3, 1);
-        EXPECT_DEATH(poly1d[alpha31] = 1.0, "Mismatched dimension");
+        EXPECT_ANY_THROW(poly1d[alpha31] = 1.0);
     }
 
 }
