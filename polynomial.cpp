@@ -51,10 +51,11 @@ Polynomial Polynomial::derivative(int direction) const {
     Polynomial derivative;
     Multi_index dir(coefficients.end()->first.dimension(), direction);
     for (const auto &term: coefficients) {
-        if (term.first.is_valid_for_subtraction(dir)) {
+        try {
             Multi_index shifted_multi_index = term.first - dir;
             derivative[shifted_multi_index] = term.second * term.first.get_value(direction);
         }
+        catch (std::range_error &e) {}
     }
     return derivative;
 }

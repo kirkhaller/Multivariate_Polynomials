@@ -2,10 +2,8 @@
 // Created by Kirk Haller on 6/25/20.
 //
 
-#include <algorithm>
 #include <functional>
 #include "Multiindex.h"
-#include <cassert>
 #include <numeric>
 
 Multi_index::Multi_index(const m_index_t &index_in) {
@@ -27,7 +25,7 @@ Multi_index::Multi_index(int dimension, int index) {
         throw std::out_of_range("Index out of bounds.");
     }
 
-    m_index = m_index_t(dimension, 0);
+    m_index = m_index_t(static_cast<unsigned long>(dimension), 0);
     m_index[index] = 1;
     degree = 1;
 }
@@ -44,7 +42,7 @@ std::string Multi_index::description() const {
     return string_out;
 }
 
-int Multi_index::get_value(const int index) const {
+int Multi_index::get_value(int index) const {
     if (dimension() < index || index < 0) {
         throw std::out_of_range("Index out of bounds.");
     }
@@ -66,19 +64,6 @@ Multi_index Multi_index::operator+(const Multi_index &rhs) const {
     }
 
     return Multi_index(index_out);
-}
-
-bool Multi_index::is_valid_for_subtraction(const Multi_index &rhs) const {
-    if (dimension() != rhs.dimension()) {
-        return false;
-    }
-
-    for (int dim = 0; dim < dimension(); dim++) {
-        if (get_value(dim) < rhs.get_value(dim)) {
-            return false;
-        }
-    }
-    return true;
 }
 
 Multi_index Multi_index::operator-(const Multi_index &rhs) const {
