@@ -60,6 +60,7 @@ namespace {
         double test_value = poly3da[index_020];
         EXPECT_EQ(test_value, 0);
         test_value = 20;
+        EXPECT_NE((double) poly3da[index_020], test_value);
         EXPECT_EQ(poly3da[index_020], 0);
         EXPECT_EQ(poly3da.get_size(), size);
     }
@@ -78,6 +79,18 @@ namespace {
 
         Multi_index alpha31(3, 1);
         EXPECT_ANY_THROW(poly1d[alpha31] = 1.0);
+    }
+
+    TEST_F(PolynomialTest, TestZeroPolynomial) {
+        Polynomial zero_poly;
+        EXPECT_TRUE(zero_poly.is_zero());
+        zero_poly[index_000] = 0;
+        EXPECT_TRUE(zero_poly.is_zero());
+        EXPECT_FALSE(poly3da.is_zero());
+    }
+
+    TEST_F(PolynomialTest, TestOperators) {
+
     }
 
 }

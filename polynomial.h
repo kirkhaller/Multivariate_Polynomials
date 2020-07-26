@@ -6,8 +6,10 @@
 #define MULTIVARIATE_POLYNOMIALS_POLYNOMIAL_H
 
 #include "absl/container/btree_map.h"
+#include "absl/strings/string_view.h"
 #include "Multiindex.h"
 #include "point.h"
+
 
 #define d_polynomial_coefficient_tol 0.00000000001
 #define coefficient_t absl::btree_map<Multi_index, double>
@@ -38,33 +40,35 @@ public:
 
 class Polynomial {
 private:
-    coefficient_t coefficients;
-    double zero = 0;
+    coefficient_t _coefficients;
+    std::string _description;
 
 public:
     Polynomial() {
-        coefficients = coefficient_t();
+        _coefficients = coefficient_t();
+        _description = "";
     }
 
     Polynomial(const Polynomial &poly_in) {
-        coefficients = coefficient_t(poly_in.coefficients.begin(), poly_in.coefficients.end());
+        _coefficients = coefficient_t(poly_in._coefficients.begin(), poly_in._coefficients.end());
+        _description = poly_in._description;
     }
 
     int get_size() const {
-        return coefficients.size();
+        return _coefficients.size();
     }
 
     int get_degree() const {
-        if (coefficients.empty())
+        if (_coefficients.empty())
             return 0;
 
         //TODO: Make this the largest, non-zero monomial term's degree.
-        return coefficients.rbegin()->first.get_degree();
+        return _coefficients.rbegin()->first.get_degree();
     }
 
     int dimension() const {
-        if (!coefficients.empty()) {
-            return coefficients.begin()->first.dimension();
+        if (!_coefficients.empty()) {
+            return _coefficients.begin()->first.dimension();
         }
         return 0;
     }
@@ -77,6 +81,12 @@ public:
 
     // operator assignments
     Polynomial operator+(const Polynomial &rh) const;
+
+    Polynomial &operator+=(const Polynomial &rhs);
+
+    Polynomial &operator-=(const Polynomial &rhs);
+
+    Polynomial &operator*=(double scale);
 
     // A structure to allow get/set using the bracket operator.
     // Thanks to: andreagriffini.com
@@ -96,12 +106,24 @@ public:
             return poly.set_coefficient(index, value);
         }
 
-        // This is a helper function
+        // operator functions
         double &operator+=(const double value) {
             KBNSum sum(value);
             double poly_coefficient = poly.get_coefficient(index);
             sum.add(poly_coefficient);
             return poly.set_coefficient(index, sum.value());
+        }
+
+        double &operator-=(const double value) {
+            KBNSum sum(-value);
+            double poly_coefficient = poly.get_coefficient(index);
+            sum.add(poly_coefficient);
+            return poly.set_coefficient(index, sum.value());
+        }
+
+        double &operator*=(const double value) {
+            double poly_coefficient = poly.get_coefficient(index);
+            return poly.set_coefficient(index, poly_coefficient * value);
         }
 
         bool operator==(const double rhs_value) const {
@@ -116,9 +138,9 @@ public:
 
     // These functions are added for testing, and to make the implimentation of the PolyBracketProxy cleaner.
     double &set_coefficient(const Multi_index &exponent, double coefficient) {
-        if (!coefficients.empty() && coefficients.begin()->first.dimension() != exponent.dimension())
+        if (!_coefficients.empty() && _coefficients.begin()->first.dimension() != exponent.dimension())
             throw std::invalid_argument("Exponent's dimensions mismatch rest of polynomial.");
-        return coefficients[exponent] = coefficient;
+        return _coefficients[exponent] = coefficient;
     }
 
     double get_coefficient(const Multi_index &exponent) const;
