@@ -22,4 +22,23 @@ namespace {
 
     };
 
+    TEST(index_test, index_comparision_test) {
+        Multi_index index_000({0, 0, 0});
+        Multi_index index_100({1, 0, 0});
+        Multi_index index_110({1, 1, 0});
+        Multi_index index_011({0, 1, 1});
+        Multi_index index_002({0, 0, 2});
+        EXPECT_TRUE(index_000 < index_100);
+        EXPECT_FALSE(index_100 < index_000);
+        EXPECT_TRUE(index_000 < index_110);
+        EXPECT_FALSE(index_110 < index_000);
+        EXPECT_TRUE(index_100 < index_110);
+        EXPECT_FALSE(index_110 < index_100);
+        EXPECT_TRUE(index_100 < index_002);
+        EXPECT_FALSE(index_002 < index_100);
+        EXPECT_TRUE(index_002 < index_011);
+        EXPECT_FALSE(index_100 < index_100);
+        EXPECT_TRUE(index_100 == index_100);
+    }
+
 } //namespace

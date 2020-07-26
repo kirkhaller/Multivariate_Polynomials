@@ -62,10 +62,13 @@ Polynomial Polynomial::derivative(int direction) const {
 
 double Polynomial::get_coefficient(const Multi_index &exponent) const {
     auto found = _coefficients.find(exponent);
-    if (found == _coefficients.end()) {
-        return 0;
+    if (found != _coefficients.end()) {
+        // Added to make debugging easier.
+        double value = found->second;
+        return value;
     }
-    return found->second;
+    // Added to make debugging easier.
+    return 0;
 }
 
 Polynomial Polynomial::operator+(const Polynomial &rhs) const {
@@ -79,10 +82,23 @@ Polynomial Polynomial::operator+(const Polynomial &rhs) const {
     return poly_out;
 }
 
-Polynomial &Polynomial::operator+=(const Polynomial &rhs) {
+Polynomial Polynomial::operator-(const Polynomial &rhs) const {
+    Polynomial poly_out(*this);
+
     for (const auto &term: rhs._coefficients) {
         Multi_index exponent(term.first);
-        (*this)[exponent] += term.second;
+        poly_out[exponent] -= term.second;
+    }
+
+    return poly_out;
+}
+
+Polynomial &Polynomial::operator+=(const Polynomial &rhs) {
+    for (const auto &term: rhs._coefficients) {
+        KBNSum sum(term.second);
+        double existing_value = get_coefficient(term.first);
+        sum.add(existing_value);
+        set_coefficient(term.first, sum.value());
     }
 
     return *this;
@@ -90,8 +106,10 @@ Polynomial &Polynomial::operator+=(const Polynomial &rhs) {
 
 Polynomial &Polynomial::operator-=(const Polynomial &rhs) {
     for (const auto &term: rhs._coefficients) {
-        Multi_index exponent(term.first);
-        (*this)[exponent] -= term.second;
+        double existing_value = get_coefficient(term.first);
+        KBNSum sum(existing_value);
+        sum.add(-term.second);
+        set_coefficient(term.first, sum.value());
     }
 
     return *this;
@@ -99,8 +117,7 @@ Polynomial &Polynomial::operator-=(const Polynomial &rhs) {
 
 Polynomial &Polynomial::operator*=(double value) {
     for (const auto &term: _coefficients) {
-        Multi_index exponent(term.first);
-        (*this)[exponent] *= value;
+        set_coefficient(term.first, value * term.second);
     }
 
     return *this;

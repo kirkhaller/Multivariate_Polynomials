@@ -61,8 +61,8 @@ inline bool operator<(const Multi_index &lhs, const Multi_index &rhs) {
         throw std::invalid_argument("Mismatched multi index Dimensions");
     }
 
-    if (lhs.get_degree() < rhs.get_degree())
-        return true;
+    if (lhs.get_degree() != rhs.get_degree())
+        return lhs.get_degree() < rhs.get_degree();
 
     for (int index = 0; index < lhs.dimension(); index++) {
         int lhs_value = lhs.get_value(index);

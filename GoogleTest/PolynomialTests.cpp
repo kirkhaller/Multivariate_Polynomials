@@ -45,24 +45,26 @@ namespace {
     };
 
     TEST_F(PolynomialTest, TestBracketOperators) {
-        int size = poly3da.get_size();
+        int size_a = poly3da.get_size();
+        int size_b = poly3db.get_size();
 
+        EXPECT_EQ((double) poly3db[index_100], 6);
         double value = poly3da[index_000];
         EXPECT_EQ(value, 1);
-        value = poly3da[index_200];
+        value = poly3db[index_200];
         EXPECT_EQ(value, 0);
-        EXPECT_EQ(poly3da.get_size(), size);
-        poly3da[index_200] = 200.0;
-        EXPECT_EQ(poly3da[index_200], 200.0);
-        EXPECT_EQ(poly3da.get_size(), (double) size + 1);
+        EXPECT_EQ(poly3db.get_size(), size_b);
+        poly3db[index_200] = 200.0;
+        EXPECT_EQ(poly3db[index_200], 200.0);
+        EXPECT_EQ(poly3db.get_size(), (double) size_b + 1);
         EXPECT_ANY_THROW(value = poly3da[index1d]);
-        size = poly3da.get_size();
+
         double test_value = poly3da[index_020];
         EXPECT_EQ(test_value, 0);
         test_value = 20;
-        EXPECT_NE((double) poly3da[index_020], test_value);
+        EXPECT_NE(poly3da[index_020], test_value);
         EXPECT_EQ(poly3da[index_020], 0);
-        EXPECT_EQ(poly3da.get_size(), size);
+        EXPECT_EQ(poly3da.get_size(), size_a);
     }
 
     TEST_F(PolynomialTest, TestDimensionDegree) {
@@ -90,6 +92,65 @@ namespace {
     }
 
     TEST_F(PolynomialTest, TestOperators) {
+        Polynomial test_sum = poly3da + poly3db;
+        EXPECT_EQ((double) test_sum[index_000], poly3da[index_000] + poly3db[index_000]);
+        EXPECT_EQ((double) test_sum[index_001], poly3da[index_001] + poly3db[index_001]);
+        EXPECT_EQ((double) test_sum[index_010], poly3da[index_010] + poly3db[index_010]);
+        EXPECT_EQ((double) test_sum[index_100], poly3da[index_100] + poly3db[index_100]);
+        EXPECT_EQ((double) test_sum[index_200], poly3da[index_200] + poly3db[index_200]);
+        EXPECT_EQ((double) test_sum[index_110], poly3da[index_110] + poly3db[index_110]);
+        EXPECT_EQ((double) test_sum[index_101], poly3da[index_101] + poly3db[index_101]);
+        EXPECT_EQ((double) test_sum[index_020], poly3da[index_020] + poly3db[index_020]);
+        EXPECT_EQ((double) test_sum[index_011], poly3da[index_011] + poly3db[index_011]);
+        EXPECT_EQ((double) test_sum[index_002], poly3da[index_002] + poly3db[index_002]);
+
+        Polynomial test_minus = poly3da - poly3db;
+        EXPECT_EQ((double) test_minus[index_000], poly3da[index_000] - poly3db[index_000]);
+        EXPECT_EQ((double) test_minus[index_001], poly3da[index_001] - poly3db[index_001]);
+        EXPECT_EQ((double) test_minus[index_100], poly3da[index_100] - poly3db[index_100]);
+        EXPECT_EQ((double) test_minus[index_010], poly3da[index_010] - poly3db[index_010]);
+        EXPECT_EQ((double) test_minus[index_200], poly3da[index_200] - poly3db[index_200]);
+        EXPECT_EQ((double) test_minus[index_110], poly3da[index_110] - poly3db[index_110]);
+        EXPECT_EQ((double) test_minus[index_101], poly3da[index_101] - poly3db[index_101]);
+        EXPECT_EQ((double) test_minus[index_020], poly3da[index_020] - poly3db[index_020]);
+        EXPECT_EQ((double) test_minus[index_011], poly3da[index_011] - poly3db[index_011]);
+        EXPECT_EQ((double) test_minus[index_002], poly3da[index_002] - poly3db[index_002]);
+
+        test_minus += poly3db;
+        EXPECT_EQ((double) test_minus[index_000], (double) poly3da[index_000]);
+        EXPECT_EQ((double) test_minus[index_100], (double) poly3da[index_100]);
+        EXPECT_EQ((double) test_minus[index_010], (double) poly3da[index_010]);
+        EXPECT_EQ((double) test_minus[index_001], (double) poly3da[index_001]);
+        EXPECT_EQ((double) test_minus[index_200], (double) poly3da[index_200]);
+        EXPECT_EQ((double) test_minus[index_110], (double) poly3da[index_110]);
+        EXPECT_EQ((double) test_minus[index_101], (double) poly3da[index_101]);
+        EXPECT_EQ((double) test_minus[index_020], (double) poly3da[index_020]);
+        EXPECT_EQ((double) test_minus[index_011], (double) poly3da[index_011]);
+        EXPECT_EQ((double) test_minus[index_002], (double) poly3da[index_002]);
+
+        test_sum -= poly3db;
+        EXPECT_EQ((double) test_sum[index_000], (double) poly3da[index_000]);
+        EXPECT_EQ((double) test_sum[index_100], (double) poly3da[index_100]);
+        EXPECT_EQ((double) test_sum[index_010], (double) poly3da[index_010]);
+        EXPECT_EQ((double) test_sum[index_001], (double) poly3da[index_001]);
+        EXPECT_EQ((double) test_sum[index_200], (double) poly3da[index_200]);
+        EXPECT_EQ((double) test_sum[index_110], (double) poly3da[index_110]);
+        EXPECT_EQ((double) test_sum[index_101], (double) poly3da[index_101]);
+        EXPECT_EQ((double) test_sum[index_020], (double) poly3da[index_020]);
+        EXPECT_EQ((double) test_sum[index_011], (double) poly3da[index_011]);
+        EXPECT_EQ((double) test_sum[index_002], (double) poly3da[index_002]);
+
+        test_sum *= 2;
+        EXPECT_EQ((double) test_sum[index_000], 2 * poly3da[index_000]);
+        EXPECT_EQ((double) test_sum[index_100], 2 * poly3da[index_100]);
+        EXPECT_EQ((double) test_sum[index_010], 2 * poly3da[index_010]);
+        EXPECT_EQ((double) test_sum[index_001], 2 * poly3da[index_001]);
+        EXPECT_EQ((double) test_sum[index_200], 2 * poly3da[index_200]);
+        EXPECT_EQ((double) test_sum[index_110], 2 * poly3da[index_110]);
+        EXPECT_EQ((double) test_sum[index_101], 2 * poly3da[index_101]);
+        EXPECT_EQ((double) test_sum[index_020], 2 * poly3da[index_020]);
+        EXPECT_EQ((double) test_sum[index_011], 2 * poly3da[index_011]);
+        EXPECT_EQ((double) test_sum[index_002], 2 * poly3da[index_002]);
 
     }
 

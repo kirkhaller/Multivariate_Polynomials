@@ -82,6 +82,8 @@ public:
     // operator assignments
     Polynomial operator+(const Polynomial &rh) const;
 
+    Polynomial operator-(const Polynomial &rh) const;
+
     Polynomial &operator+=(const Polynomial &rhs);
 
     Polynomial &operator-=(const Polynomial &rhs);
@@ -130,6 +132,25 @@ public:
             double poly_coefficient = poly.get_coefficient(index);
             return poly_coefficient == rhs_value;
         }
+
+        bool operator!=(const double rhs_value) const {
+            double poly_coefficient = poly.get_coefficient(index);
+            return poly_coefficient != rhs_value;
+        }
+
+        bool operator==(const PolynomialBracketProxy rhs) const {
+            double poly_coefficient = poly.get_coefficient(index);
+            double rhs_coefficient = rhs.poly.get_coefficient(rhs.index);
+            return poly_coefficient == rhs_coefficient;
+        }
+
+        bool operator!=(const PolynomialBracketProxy rhs) const {
+            double poly_coefficient = poly.get_coefficient(index);
+            double rhs_coefficient = rhs.poly.get_coefficient(rhs.index);
+            return poly_coefficient != rhs_coefficient;
+        }
+
+
     };
 
     PolynomialBracketProxy operator[](Multi_index &index) {
