@@ -7,6 +7,7 @@
 
 #include "absl/container/btree_map.h"
 #include "absl/strings/string_view.h"
+#include "utilities/kbnsum.h"
 #include "Multiindex.h"
 #include "point.h"
 
@@ -14,28 +15,9 @@
 #define d_polynomial_coefficient_tol 0.00000000001
 #define coefficient_t absl::btree_map<Multi_index, double>
 
-class KBNSum {
-private:
-    double sum = 0.0;
-    double error_sum = 0.0;
-
-public:
-    explicit KBNSum(double value_in);
-
-    void add(double value_in);
-
-    void add(const KBNSum &sum_in) {
-        add(sum_in.sum);
-        add(sum_in.error_sum);
-    }
-
-    [[nodiscard]] double value() const {
-        return sum + error_sum;
-    }
-
-    [[nodiscard]] double error() const {
-        return error_sum;
-    }
+struct monomial_term {
+    Multi_index exponent;
+    double coefficient;
 };
 
 class Polynomial {
@@ -54,16 +36,18 @@ public:
         description = poly_in.description;
     }
 
-    int get_size() const {
+    long get_size() const {
         return coefficients.size();
     }
+
+    monomial_term leading_term() const;
 
     int get_degree() const {
         if (coefficients.empty())
             return 0;
 
         //TODO: Make this the largest, non-zero monomial term's degree.
-        return coefficients.rbegin()->first.get_degree();
+        return leading_term().exponent.get_degree();
     }
 
     int dimension() const {

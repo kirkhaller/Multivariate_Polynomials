@@ -5,18 +5,6 @@
 #include <iostream>
 #include "polynomial.h"
 
-KBNSum::KBNSum(double value_in) : sum(value_in), error_sum(0.0) {}
-
-void KBNSum::add(double value_in) {
-    double new_sum = sum + value_in;
-    if (abs(sum) > abs(value_in)) {
-        error_sum += ((sum - new_sum) + value_in);
-    } else {
-        error_sum += ((value_in - new_sum) + sum);
-    }
-    sum = new_sum;
-}
-
 bool Polynomial::is_zero() const {
     return !std::any_of(coefficients.begin(), coefficients.end(),
                         [](const auto &term) { return abs(term.second) > d_polynomial_coefficient_tol; });
@@ -121,5 +109,20 @@ Polynomial &Polynomial::operator*=(double value) {
     }
 
     return *this;
+}
+
+monomial_term Polynomial::leading_term() const {
+    monomial_term term_out;
+
+    for (auto term = coefficients.rbegin(); term != coefficients.rend(); term++) {
+        if (abs(term->second) > d_polynomial_coefficient_tol) {
+            term_out.coefficient = term->second;
+            term_out.exponent = term->first;
+            return term_out;
+        }
+    }
+    term_out.coefficient = 0;
+    term_out.exponent = Multi_index();
+    return term_out;
 }
 

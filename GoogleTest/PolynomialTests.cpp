@@ -45,8 +45,8 @@ namespace {
     };
 
     TEST_F(PolynomialTest, TestBracketOperators) {
-        int size_a = poly3da.get_size();
-        int size_b = poly3db.get_size();
+        long size_a = poly3da.get_size();
+        long size_b = poly3db.get_size();
 
         EXPECT_EQ((double) poly3db[index_100], 6);
         double value = poly3da[index_000];
