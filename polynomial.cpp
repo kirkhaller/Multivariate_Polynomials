@@ -18,7 +18,7 @@ void KBNSum::add(double value_in) {
 }
 
 bool Polynomial::is_zero() const {
-    return !std::any_of(_coefficients.begin(), _coefficients.end(),
+    return !std::any_of(coefficients.begin(), coefficients.end(),
                         [](const auto &term) { return abs(term.second) > d_polynomial_coefficient_tol; });
 
 }
@@ -26,7 +26,7 @@ bool Polynomial::is_zero() const {
 double Polynomial::evaluate(const Point &point) const {
     KBNSum value_out(0.0);
 
-    for (const auto &term : _coefficients) {
+    for (const auto &term : coefficients) {
         // coefficient * x^(exponent)
         double term_value = term.second * point.power(const_cast<Multi_index &>(term.first));
         value_out.add(term_value);
@@ -37,7 +37,7 @@ double Polynomial::evaluate(const Point &point) const {
 
 Polynomial Polynomial::multiply_by_monomial(Multi_index &index, double coefficient) {
     Polynomial poly_out;
-    for (const auto &term : _coefficients) {
+    for (const auto &term : coefficients) {
         Multi_index shifted_multi_index = term.first + index;
         poly_out[shifted_multi_index] = coefficient * term.second;
     }
@@ -49,8 +49,8 @@ Polynomial Polynomial::derivative(int direction) const {
         return Polynomial();
 
     Polynomial derivative;
-    Multi_index dir(_coefficients.end()->first.dimension(), direction);
-    for (const auto &term: _coefficients) {
+    Multi_index dir(coefficients.end()->first.dimension(), direction);
+    for (const auto &term: coefficients) {
         try {
             Multi_index shifted_multi_index = term.first - dir;
             derivative[shifted_multi_index] = term.second * term.first.get_value(direction);
@@ -61,8 +61,8 @@ Polynomial Polynomial::derivative(int direction) const {
 }
 
 double Polynomial::get_coefficient(const Multi_index &exponent) const {
-    auto found = _coefficients.find(exponent);
-    if (found != _coefficients.end()) {
+    auto found = coefficients.find(exponent);
+    if (found != coefficients.end()) {
         // Added to make debugging easier.
         double value = found->second;
         return value;
@@ -74,7 +74,7 @@ double Polynomial::get_coefficient(const Multi_index &exponent) const {
 Polynomial Polynomial::operator+(const Polynomial &rhs) const {
     Polynomial poly_out(*this);
 
-    for (const auto &term: rhs._coefficients) {
+    for (const auto &term: rhs.coefficients) {
         Multi_index exponent(term.first);
         poly_out[exponent] += term.second;
     }
@@ -85,7 +85,7 @@ Polynomial Polynomial::operator+(const Polynomial &rhs) const {
 Polynomial Polynomial::operator-(const Polynomial &rhs) const {
     Polynomial poly_out(*this);
 
-    for (const auto &term: rhs._coefficients) {
+    for (const auto &term: rhs.coefficients) {
         Multi_index exponent(term.first);
         poly_out[exponent] -= term.second;
     }
@@ -94,7 +94,7 @@ Polynomial Polynomial::operator-(const Polynomial &rhs) const {
 }
 
 Polynomial &Polynomial::operator+=(const Polynomial &rhs) {
-    for (const auto &term: rhs._coefficients) {
+    for (const auto &term: rhs.coefficients) {
         KBNSum sum(term.second);
         double existing_value = get_coefficient(term.first);
         sum.add(existing_value);
@@ -105,7 +105,7 @@ Polynomial &Polynomial::operator+=(const Polynomial &rhs) {
 }
 
 Polynomial &Polynomial::operator-=(const Polynomial &rhs) {
-    for (const auto &term: rhs._coefficients) {
+    for (const auto &term: rhs.coefficients) {
         double existing_value = get_coefficient(term.first);
         KBNSum sum(existing_value);
         sum.add(-term.second);
@@ -116,7 +116,7 @@ Polynomial &Polynomial::operator-=(const Polynomial &rhs) {
 }
 
 Polynomial &Polynomial::operator*=(double value) {
-    for (const auto &term: _coefficients) {
+    for (const auto &term: coefficients) {
         set_coefficient(term.first, value * term.second);
     }
 

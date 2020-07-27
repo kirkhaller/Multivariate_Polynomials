@@ -40,35 +40,35 @@ public:
 
 class Polynomial {
 private:
-    coefficient_t _coefficients;
-    std::string _description;
+    coefficient_t coefficients;
+    std::string description;
 
 public:
     Polynomial() {
-        _coefficients = coefficient_t();
-        _description = "";
+        coefficients = coefficient_t();
+        description = "";
     }
 
     Polynomial(const Polynomial &poly_in) {
-        _coefficients = coefficient_t(poly_in._coefficients.begin(), poly_in._coefficients.end());
-        _description = poly_in._description;
+        coefficients = coefficient_t(poly_in.coefficients.begin(), poly_in.coefficients.end());
+        description = poly_in.description;
     }
 
     int get_size() const {
-        return _coefficients.size();
+        return coefficients.size();
     }
 
     int get_degree() const {
-        if (_coefficients.empty())
+        if (coefficients.empty())
             return 0;
 
         //TODO: Make this the largest, non-zero monomial term's degree.
-        return _coefficients.rbegin()->first.get_degree();
+        return coefficients.rbegin()->first.get_degree();
     }
 
     int dimension() const {
-        if (!_coefficients.empty()) {
-            return _coefficients.begin()->first.dimension();
+        if (!coefficients.empty()) {
+            return coefficients.begin()->first.dimension();
         }
         return 0;
     }
@@ -159,9 +159,9 @@ public:
 
     // These functions are added for testing, and to make the implimentation of the PolyBracketProxy cleaner.
     double &set_coefficient(const Multi_index &exponent, double coefficient) {
-        if (!_coefficients.empty() && _coefficients.begin()->first.dimension() != exponent.dimension())
+        if (!coefficients.empty() && coefficients.begin()->first.dimension() != exponent.dimension())
             throw std::invalid_argument("Exponent's dimensions mismatch rest of polynomial.");
-        return _coefficients[exponent] = coefficient;
+        return coefficients[exponent] = coefficient;
     }
 
     double get_coefficient(const Multi_index &exponent) const;
