@@ -2,7 +2,7 @@
 // Created by Kirk Haller on 7/9/20.
 //
 
-#include <iostream>
+#include "absl/strings/string_view.h"
 #include "polynomial.h"
 
 bool Polynomial::is_zero() const {
@@ -124,5 +124,18 @@ monomial_term Polynomial::leading_term() const {
     term_out.coefficient = 0;
     term_out.exponent = Multi_index();
     return term_out;
+}
+
+std::string Polynomial::describe() {
+    std::string desc_str = "", connector = "";
+
+    for (auto term = coefficients.rbegin(); term != coefficients.rend(); term++) {
+        desc_str += connector + std::to_string(term->second) + " x^" + (term->first).description();
+        connector = " + ";
+    }
+
+    description = desc_str;
+
+    return desc_str;
 }
 

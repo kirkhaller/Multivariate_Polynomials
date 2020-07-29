@@ -20,7 +20,9 @@ private:
 public:
     Multi_index() : degree(-1), m_index({}) {};
 
-    explicit Multi_index(const m_index_t &index_in);
+    Multi_index(std::string str);
+
+    Multi_index(const m_index_t &index_in);
 
     // Returns the unit vector (0,..,0,1,0,...0) with the 1 in the indicated index.
     Multi_index(int dimension, int index);

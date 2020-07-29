@@ -15,17 +15,17 @@ namespace {
 
         void SetUp() override {
 
-            index1d = Multi_index({3});
-            index_000 = Multi_index({0, 0, 0});
-            index_100 = Multi_index({1, 0, 0});
-            index_010 = Multi_index({0, 1, 0});
-            index_001 = Multi_index({0, 0, 1});
-            index_200 = Multi_index({2, 0, 0});
-            index_110 = Multi_index({1, 1, 0});
-            index_101 = Multi_index({1, 0, 1});
-            index_020 = Multi_index({0, 2, 0});
-            index_011 = Multi_index({0, 1, 1});
-            index_002 = Multi_index({0, 0, 2});
+            index1d = Multi_index(m_index_t({3}));
+            index_000 = Multi_index(m_index_t({0, 0, 0}));
+            index_100 = Multi_index(m_index_t({1, 0, 0}));
+            index_010 = Multi_index(m_index_t({0, 1, 0}));
+            index_001 = Multi_index(m_index_t({0, 0, 1}));
+            index_200 = Multi_index(m_index_t({2, 0, 0}));
+            index_110 = Multi_index(m_index_t({1, 1, 0}));
+            index_101 = Multi_index(m_index_t({1, 0, 1}));
+            index_020 = Multi_index(m_index_t({0, 2, 0}));
+            index_011 = Multi_index(m_index_t({0, 1, 1}));
+            index_002 = Multi_index(m_index_t({0, 0, 2}));
 
             poly1d.set_coefficient(index1d, 1);
 

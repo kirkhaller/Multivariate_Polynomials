@@ -36,8 +36,17 @@ public:
         description = poly_in.description;
     }
 
+    Polynomial(const coefficient_t &map_in) {
+        coefficients = coefficient_t(map_in.begin(), map_in.end());
+        description = describe();
+    }
+
     long get_size() const {
         return coefficients.size();
+    }
+
+    std::string get_description() const {
+        return description;
     }
 
     monomial_term leading_term() const;
@@ -62,6 +71,8 @@ public:
     double evaluate(const Point &point) const;
 
     Polynomial derivative(int direction) const;
+
+    std::string describe();
 
     // operator assignments
     Polynomial operator+(const Polynomial &rh) const;
