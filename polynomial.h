@@ -28,7 +28,6 @@ private:
 public:
     Polynomial() {
         coefficients = coefficient_t();
-        description = "";
     }
 
     Polynomial(const Polynomial &poly_in) {
@@ -38,14 +37,17 @@ public:
 
     Polynomial(const coefficient_t &map_in) {
         coefficients = coefficient_t(map_in.begin(), map_in.end());
-        description = describe();
+        describe();
     }
 
     long get_size() const {
         return coefficients.size();
     }
 
-    std::string get_description() const {
+    std::string get_description() {
+        if (description.size() == 0) {
+            describe();
+        }
         return description;
     }
 
@@ -72,7 +74,7 @@ public:
 
     Polynomial derivative(int direction) const;
 
-    std::string describe();
+    absl::string_view describe();
 
     // operator assignments
     Polynomial operator+(const Polynomial &rh) const;
@@ -156,7 +158,11 @@ public:
     double &set_coefficient(const Multi_index &exponent, double coefficient) {
         if (!coefficients.empty() && coefficients.begin()->first.dimension() != exponent.dimension())
             throw std::invalid_argument("Exponent's dimensions mismatch rest of polynomial.");
-        return coefficients[exponent] = coefficient;
+        coefficients[exponent] = coefficient;
+#ifndef NDEBUG
+        describe();
+#endif
+        return coefficients[exponent];
     }
 
     double get_coefficient(const Multi_index &exponent) const;

@@ -126,16 +126,15 @@ monomial_term Polynomial::leading_term() const {
     return term_out;
 }
 
-std::string Polynomial::describe() {
-    std::string desc_str = "", connector = "";
+absl::string_view Polynomial::describe() {
+    std::string connector;
+    description = "";
 
     for (auto term = coefficients.rbegin(); term != coefficients.rend(); term++) {
-        desc_str += connector + std::to_string(term->second) + " x^" + (term->first).description();
+        description += connector + std::to_string(term->second) + " x^" + (term->first).description();
         connector = " + ";
     }
 
-    description = desc_str;
-
-    return desc_str;
+    return description;
 }
 

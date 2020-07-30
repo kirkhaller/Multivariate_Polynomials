@@ -32,12 +32,6 @@ std::vector<std::string> split_string (std::vector<std::string> to_split,  std::
             (*str).erase(0, pos + erase_offset);
             start_offset = (1-drop_delim) * delim.length();
         }
-
-        /*
-        if (! (*str).empty()) {
-            tokens.push_back(*str);
-        }
-         */
     }
 
     return tokens;
@@ -61,7 +55,7 @@ Polynomial string_to_poly (std::string desc_str) {
 
     // remove whitespace from each element of tokens
     for (auto s = tokens.begin(); s != tokens.end(); s++) {
-        (*s).erase( std::remove_if((*s).begin(), (*s).end(), isspace), (*s).end());
+        s->erase(std::remove_if(s->begin(), s->end(), isspace), s->end());
     }
 
     // check case that start of string was "+" or "-" In which case tokens will have a spurious leading ""
