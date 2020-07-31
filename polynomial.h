@@ -154,7 +154,7 @@ public:
         return PolynomialBracketProxy(*this, index);
     }
 
-    // These functions are added for testing, and to make the implimentation of the PolyBracketProxy cleaner.
+    // These functions are added for testing, and to make the implementation of the PolyBracketProxy cleaner.
     double &set_coefficient(const Multi_index &exponent, double coefficient) {
         if (!coefficients.empty() && coefficients.begin()->first.dimension() != exponent.dimension())
             throw std::invalid_argument("Exponent's dimensions mismatch rest of polynomial.");

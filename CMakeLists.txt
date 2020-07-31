@@ -1,10 +1,11 @@
 cmake_minimum_required(VERSION 3.16)
 project(Multivariate_Polynomials)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 # 'lib' is the folder with Google Test sources
 add_subdirectory(GoogleTest/lib lib)
+add_subdirectory(abseil-cpp)
 include_directories(include ${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
 add_library(Multivariate_Polynomials
