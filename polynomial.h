@@ -5,6 +5,7 @@
 #ifndef MULTIVARIATE_POLYNOMIALS_POLYNOMIAL_H
 #define MULTIVARIATE_POLYNOMIALS_POLYNOMIAL_H
 
+#include <string>
 #include "absl/container/btree_map.h"
 #include "absl/strings/string_view.h"
 #include "utilities/kbnsum.h"
@@ -36,9 +37,11 @@ public:
     }
 
     Polynomial(const coefficient_t &map_in) {
-        coefficients = coefficient_t(map_in.begin(), map_in.end());
+        coefficients = map_in;
         describe();
     }
+
+    Polynomial(const std::string &string_in);
 
     long get_size() const {
         return coefficients.size();

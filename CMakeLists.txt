@@ -1,11 +1,13 @@
 cmake_minimum_required(VERSION 3.16)
 project(Multivariate_Polynomials)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 # 'lib' is the folder with Google Test sources
 add_subdirectory(GoogleTest/lib lib)
+add_subdirectory(abseil-cpp)
 include_directories(include ${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+
 
 add_library(Multivariate_Polynomials
         point.cpp point.h
@@ -19,6 +21,6 @@ add_executable(Google_Tests_run
         GoogleTest/PointTests.cpp
         GoogleTest/MultiindexTests.cpp
         GoogleTest/PolynomialTests.cpp
-        utilities/kbnsum.cpp
-        GoogleTest/Neeza_scratch.cpp)
-target_link_libraries(Google_Tests_run gtest gtest_main Multivariate_Polynomials)
+        )
+
+target_link_libraries(Google_Tests_run gtest gtest_main Multivariate_Polynomials absl::strings)

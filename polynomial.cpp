@@ -4,6 +4,14 @@
 
 #include "absl/strings/string_view.h"
 #include "polynomial.h"
+#include "utilities/utilities.h"
+
+Polynomial::Polynomial(const std::string &string_in) {
+    if (!parse_polynomial_string(string_in, &coefficients)) {
+        throw std::invalid_argument("Invalid String: " + string_in);
+    }
+    describe();
+}
 
 bool Polynomial::is_zero() const {
     return !std::any_of(coefficients.begin(), coefficients.end(),

@@ -44,6 +44,12 @@ namespace {
         }
     };
 
+    TEST_F(PolynomialTest, TestConstruction) {
+        Polynomial test_polynomial("2.0 x^(1,1) - 1.0 x^(0,1) + 10 x^(0,0)");
+        Multi_index index_11(m_index_t({1, 1}));
+        EXPECT_EQ(test_polynomial[index_11], 2.0);
+    }
+
     TEST_F(PolynomialTest, TestBracketOperators) {
         long size_a = poly3da.get_size();
         long size_b = poly3db.get_size();
