@@ -4,7 +4,6 @@
 
 #include "gtest/gtest.h"
 #include "../point.h"
-#include "../Multiindex.h"
 
 namespace {
 

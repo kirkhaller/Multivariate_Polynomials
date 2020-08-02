@@ -3,7 +3,6 @@
 //
 
 #include "point.h"
-#include <cassert>
 
 Point::Point(const point_t &point_in) {
     value = point_t(point_in);

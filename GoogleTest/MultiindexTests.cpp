@@ -20,7 +20,7 @@ namespace {
         EXPECT_ANY_THROW(multi_index.get_value(4));
         EXPECT_ANY_THROW(Multi_index multi_index2 = Multi_index(bad_value));
 
-    };
+    }
 
     TEST(index_test, index_comparision_test) {
         Multi_index index_000(m_index_t({0, 0, 0}));
