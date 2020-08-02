@@ -36,27 +36,27 @@ public:
         description = poly_in.description;
     }
 
-    Polynomial(const coefficient_t &map_in) {
+    explicit Polynomial(const coefficient_t &map_in) {
         coefficients = map_in;
         describe();
     }
 
     Polynomial(const std::string &string_in);
 
-    long get_size() const {
+    [[nodiscard]] long get_size() const {
         return coefficients.size();
     }
 
     std::string get_description() {
-        if (description.size() == 0) {
+        if (description.empty()) {
             describe();
         }
         return description;
     }
 
-    monomial_term leading_term() const;
+    [[nodiscard]] monomial_term leading_term() const;
 
-    int get_degree() const {
+    [[nodiscard]] int get_degree() const {
         if (coefficients.empty())
             return 0;
 
@@ -64,18 +64,18 @@ public:
         return leading_term().exponent.get_degree();
     }
 
-    int dimension() const {
+    [[nodiscard]] int dimension() const {
         if (!coefficients.empty()) {
             return coefficients.begin()->first.dimension();
         }
         return 0;
     }
 
-    bool is_zero() const;
+    [[nodiscard]] bool is_zero() const;
 
-    double evaluate(const Point &point) const;
+    [[nodiscard]] double evaluate(const Point &point) const;
 
-    Polynomial derivative(int direction) const;
+    [[nodiscard]] Polynomial derivative(int direction) const;
 
     absl::string_view describe();
 
@@ -157,7 +157,7 @@ public:
         return PolynomialBracketProxy(*this, index);
     }
 
-    // These functions are added for testing, and to make the implimentation of the PolyBracketProxy cleaner.
+    // These functions are added for testing, and to make the implementation of the PolyBracketProxy cleaner.
     double &set_coefficient(const Multi_index &exponent, double coefficient) {
         if (!coefficients.empty() && coefficients.begin()->first.dimension() != exponent.dimension())
             throw std::invalid_argument("Exponent's dimensions mismatch rest of polynomial.");
