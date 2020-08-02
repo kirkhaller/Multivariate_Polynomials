@@ -4,6 +4,7 @@
 
 #include "gtest/gtest.h"
 #include "../point.h"
+#include "../Multiindex.h"
 
 namespace {
 
@@ -16,6 +17,46 @@ namespace {
         EXPECT_EQ(initial_value[1], point.get_value(1));
         EXPECT_EQ(initial_value[2], point.get_value(2));
         EXPECT_DEATH(point.get_value(4), "Index for point out of range");
+    }
+
+    TEST(point_test, point_evaluation) {
+        Point zero({0, 0});
+        Point x({1, 0});
+        Point y({0, 1});
+        Point half_x({0.5, 0});
+        Point half_y({0, 0.5});
+        Point x_plus_y({1, 1});
+
+        Multi_index index_00(m_index_t{0, 0});
+        Multi_index index_10(m_index_t{1, 0});
+        Multi_index index_01(m_index_t{0, 1});
+        Multi_index index_11(m_index_t{1, 1});
+
+        EXPECT_EQ(zero.power(index_00), 1);
+        EXPECT_EQ(x.power(index_00), 1);
+        EXPECT_EQ(y.power(index_00), 1);
+
+        EXPECT_EQ(zero.power(index_10), 0);
+        EXPECT_EQ(x.power(index_10), 1);
+        EXPECT_EQ(y.power(index_10), 0);
+        EXPECT_EQ(half_x.power(index_10), 0.5);
+        EXPECT_EQ(half_y.power(index_10), 0);
+        EXPECT_EQ(x_plus_y.power(index_10), 1);
+
+        EXPECT_EQ(zero.power(index_01), 0);
+        EXPECT_EQ(x.power(index_01), 0);
+        EXPECT_EQ(y.power(index_01), 1);
+        EXPECT_EQ(half_x.power(index_01), 0);
+        EXPECT_EQ(half_y.power(index_01), 0.5);
+        EXPECT_EQ(x_plus_y.power(index_01), 1);
+
+        EXPECT_EQ(zero.power(index_11), 0);
+        EXPECT_EQ(x.power(index_11), 0);
+        EXPECT_EQ(y.power(index_11), 0);
+        EXPECT_EQ(half_x.power(index_11), 0);
+        EXPECT_EQ(half_y.power(index_11), 0);
+        EXPECT_EQ(x_plus_y.power(index_11), 1);
+
     }
 
 }

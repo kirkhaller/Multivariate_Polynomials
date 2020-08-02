@@ -98,7 +98,7 @@ Polynomial string_to_poly (std::string desc_str) {
         exponents_str.push_back(tokens[i*2 + 1]);
     }
 
-    // TODO: Check that coeffs and exponents have the same length
+    // Check that coeffs and exponents have the same length
     assert(coeffs.size() == exponents_str.size());
 
     // convert each element of exponents_str into a multi-index using constructor
@@ -153,7 +153,7 @@ bool parse_polynomial_string(const string &string_in, coefficient_t *term_map_ou
     vector<string> working_string_vector;
     string working_string;
 
-    // Clear extra white space
+    // Clear extra white space (change "- 1", to "-1")
     working_string_vector = StrSplit(string_in, ' ', absl::SkipEmpty());
     working_string = StrJoin(working_string_vector, "");
 

@@ -3,6 +3,7 @@
 //
 
 #include "gtest/gtest.h"
+#include "../point.h"
 #include "../polynomial.h"
 #include <vector>
 
@@ -41,6 +42,7 @@ namespace {
             poly3db.set_coefficient(index_101, 9);
             poly3db.set_coefficient(index_011, 10);
             poly3db.set_coefficient(index_002, 11);
+
         }
     };
 
@@ -166,6 +168,24 @@ namespace {
         EXPECT_EQ((double) test_sum[index_011], 2 * poly3da[index_011]);
         EXPECT_EQ((double) test_sum[index_002], 2 * poly3da[index_002]);
 
+    }
+
+    TEST_F(PolynomialTest, TestPolynomialEvaluation) {
+        Point point1d_0({0});
+        Point point1d_1({1});
+        Point point1d_2({2});
+        EXPECT_EQ(poly1d.evaluate(point1d_0), 0);
+        EXPECT_EQ(poly1d.evaluate(point1d_1), 1);
+        EXPECT_EQ(poly1d.evaluate(point1d_2), 8);
+
+        Point point3d_000({0, 0, 0});
+        Point point3d_100({1, 0, 0});
+        Point point3d_010({0, 1, 0});
+        Point point3d_001({0, 0, 1});
+        EXPECT_EQ(poly3da.evaluate(point3d_000), 1);
+        EXPECT_EQ(poly3da.evaluate(point3d_100), 3);
+        EXPECT_EQ(poly3da.evaluate(point3d_010), 4);
+        EXPECT_EQ(poly3da.evaluate(point3d_001), 5);
     }
 
 }
