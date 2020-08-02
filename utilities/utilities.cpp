@@ -20,15 +20,15 @@
 // str = "(1,0,0) + 1.2"; delim="+"; drop_delim = false =>
 //      tokens = ["(1,0,0)", "+ 1.2"]
 
-std::vector<std::string> split_string (std::vector<std::string> to_split,  std::string delim,
-                                        const bool drop_delim) {
+std::vector<std::string> split_string(std::vector<std::string> to_split, const std::string &delim,
+                                      const bool drop_delim) {
     std::vector<std::string> tokens;
     std::string token = "", search_str;
     size_t pos = 0;
     int erase_offset = drop_delim * delim.length();
     int start_offset = 0;
 
-    for (auto str=to_split.begin(); str != to_split.end(); str++) {
+    for (auto str = to_split.begin(); str != to_split.end(); str++) {
         pos = 0;
         start_offset = 0;
         while (pos != std::string::npos) {
@@ -48,7 +48,6 @@ std::vector<std::string> split_string (std::vector<std::string> to_split,  std::
 Polynomial string_to_poly (std::string desc_str) {
     std::vector<std::string> tokens;
     std::string token;
-    size_t pos;
 
     // tokenize desc_str using delimiter "x^"
     tokens.push_back(desc_str);
@@ -132,7 +131,7 @@ bool parse_multiindex_string(const string &string_in, m_index_t *exponent_out) {
     //Get the terms
     vector<string> working_string_vector;
     working_string_vector = StrSplit(string_in, ByAnyChar("(,)"), SkipWhitespace());
-    for (auto exponent_string : working_string_vector) {
+    for (const auto &exponent_string : working_string_vector) {
         int exp_term = 0;
         if (!SimpleAtoi(exponent_string, &exp_term)) {
             return false;
@@ -162,12 +161,12 @@ bool parse_polynomial_string(const string &string_in, coefficient_t *term_map_ou
     working_string = StrJoin(working_string_vector, "+ -");
 
     //Break into terms: a coefficient, variable and exponent
-    working_string_vector = StrSplit(working_string, "+", absl::SkipWhitespace()); //TODO: Write a better predicate
+    working_string_vector = StrSplit(working_string, '+', absl::SkipWhitespace()); //TODO: Write a better predicate
 
     //Process each term, and add to term_map_out
     vector<string> working_term_vector;
 
-    for (auto term: working_string_vector) {
+    for (const auto &term: working_string_vector) {
         working_term_vector = StrSplit(term, "x^", SkipEmpty());
         if (working_term_vector.size() > 2) {
             return false;

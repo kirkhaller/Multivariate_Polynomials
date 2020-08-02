@@ -9,7 +9,7 @@
 #include "../Multiindex.h"
 #include "../polynomial.h"
 
-std::vector<std::string> split_string(std::vector<std::string> to_split, std::string delim,
+std::vector<std::string> split_string(std::vector<std::string> to_split, const std::string &delim,
                                       const bool drop_delim);
 
 //Multi_index string_to_multi (std::string desc_str);
