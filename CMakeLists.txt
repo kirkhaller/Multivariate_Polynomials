@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 # 'lib' is the folder with Google Test sources
 add_subdirectory(GoogleTest/lib lib)
 add_subdirectory(abseil-cpp)
+find_library(abseil REQUIRED)
 include_directories(include ${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
 
@@ -14,7 +15,8 @@ add_library(Multivariate_Polynomials
         Multiindex.cpp Multiindex.h
         polynomial.cpp polynomial.h
         utilities/kbnsum.cpp utilities/kbnsum.h
-        utilities/utilities.cpp utilities/utilities.h)
+        utilities/utilities.cpp utilities/utilities.h
+        LinearInterpolationProblem.cpp LinearInterpolationProblem.h)
 
 # 'Google_Tests_run' is the target name
 add_executable(Google_Tests_run
