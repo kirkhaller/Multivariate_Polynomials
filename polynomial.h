@@ -41,7 +41,7 @@ public:
         describe();
     }
 
-    Polynomial(const std::string &string_in);
+    explicit Polynomial(const std::string &string_in);
 
     [[nodiscard]] long get_size() const {
         return coefficients.size();
@@ -168,7 +168,7 @@ public:
         return coefficients[exponent];
     }
 
-    double get_coefficient(const Multi_index &exponent) const;
+    [[nodiscard]] double get_coefficient(const Multi_index &exponent) const;
 
 private:
     Polynomial multiply_by_monomial(Multi_index &index, double coefficient);

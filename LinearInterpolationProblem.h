@@ -6,14 +6,18 @@
 #define MULTIVARIATE_POLYNOMIALS_LINEARINTERPOLATIONPROBLEM_H
 
 #include "absl/container/btree_map.h"
+#include <cassert>
 #include "point.h"
 #include "polynomial.h"
 #include <utility>
 #include <vector>
 
+#define d_polynomial_value_tol 0.00000000001
 using namespace absl;
 using namespace std;
 
+// A Lagrange Polynomials is a polynomial which is 1.0 at the point specified,
+// and zero at all other interpolation points.
 struct Lagrange {
     Point point;
     Polynomial *polynomial_ptr;
@@ -28,6 +32,12 @@ struct Lagrange {
     void set_polynomial(Polynomial *poly_in) {
         delete polynomial_ptr;
         polynomial_ptr = poly_in;
+#ifndef NDEBUG
+        if (polynomial_ptr != nullptr) {
+            assert(fabs(1.0 - polynomial_ptr->evaluate(point)) < d_polynomial_value_tol);
+        }
+#endif
+
     }
 
     [[nodiscard]] int get_degree() const {
@@ -38,6 +48,13 @@ struct Lagrange {
     }
 
 };
+
+/*
+ * A linear interpolation problem in general takes a set of points with data, and a function space and returns a
+ * unique element of the function space that matches the data at the points. Here, the function space is a subset
+ * of the space of polynomials. Rather than matching data for a specific function, it returns the lagrange polynomials.
+ * Lagrange polynomials are 1 at a specified point, and zero at all others.
+ */
 
 class LinearInterpolationProblem {
 private:

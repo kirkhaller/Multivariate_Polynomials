@@ -15,7 +15,7 @@ namespace {
         EXPECT_EQ(initial_value[0], point.get_value(0));
         EXPECT_EQ(initial_value[1], point.get_value(1));
         EXPECT_EQ(initial_value[2], point.get_value(2));
-        EXPECT_DEATH(point.get_value(4), "Index for point out of range");
+        EXPECT_DEATH(int value = point.get_value(4), "Index for point out of range");
     }
 
     TEST(point_test, point_evaluation) {

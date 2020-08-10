@@ -6,6 +6,7 @@
 
 Point::Point(const point_t &point_in) {
     value = point_t(point_in);
+    value.shrink_to_fit();
 }
 
 std::string Point::description() const {
@@ -20,7 +21,7 @@ std::string Point::description() const {
     return string_out;
 }
 
-double Point::get_value(const int index) const {
+double Point::get_value(int index) const {
     assert(index >= 0 && index < dimension() && "Index for point out of range");
     return value[index];
 }

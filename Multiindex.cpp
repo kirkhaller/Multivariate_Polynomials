@@ -31,14 +31,15 @@ Multi_index::Multi_index(std::string str) {
     // convert each element of tokens to an integer
     int exponent;
     std::vector<int> exponents;
-    for (auto s=tokens.begin(); s != tokens.end(); s++) {
-        exponent = std::stoi(*s);
+    for (auto &token : tokens) {
+        exponent = std::stoi(token);
         exponents.push_back(exponent);
     }
 
     // TODO: try to use the constructor that uses the m_index_t as a parameter
     // Now set object properties based on values in exponents.
     m_index = m_index_t(exponents);
+    m_index.shrink_to_fit();
 
     // check that values are all non-negative
     for (int index = 0; index < dimension(); index++) {
@@ -53,6 +54,7 @@ Multi_index::Multi_index(std::string str) {
 
 Multi_index::Multi_index(const m_index_t &index_in) {
     m_index = m_index_t(index_in); // set the values of m_index based index_in
+    m_index.shrink_to_fit();
 
     // that values are all non-negative
     for (int index = 0; index < dimension(); index++) {
@@ -128,7 +130,49 @@ Multi_index Multi_index::operator-(const Multi_index &rhs) const {
 }
 
 
+void compute_index_values_to_degree(int degree, int dimension, m_index_t &index, std::vector<m_index_t > &indices_out) {
+    std::vector<m_index_t > new_indices;
+    for (int count = 0; count < degree; count++) {
+        m_index_t new_index(index);
+        new_index.push_back(count);
+        new_indices.push_back(new_index);
+    }
+    index.push_back(degree);
+    new_indices.push_back(index);
 
+    if (dimension > 1) {
+        for (auto &working_index: new_indices) {
+            compute_index_values_to_degree(degree - working_index.back(), dimension - 1,
+                                           working_index, indices_out);
+        }
+    } else {
+        indices_out.reserve(indices_out.size() + new_indices.size());
+        indices_out.insert(indices_out.end(), new_indices.begin(), new_indices.end());
+    }
 
+}
 
+std::vector<Multi_index> compute_exponents_to_degree(int degree, int dimension, bool homogeneous) {
+    std::vector<Multi_index> indices;
+    std::vector<m_index_t > index_vectors;
+    m_index_t working_index;
+    working_index.reserve(dimension);
 
+    int working_dimension = (homogeneous ? dimension - 1 : dimension);
+    compute_index_values_to_degree(degree, working_dimension, working_index, index_vectors);
+
+    if (homogeneous) {
+        for (auto &index : index_vectors) {
+            int index_degree = std::accumulate(index.begin(), index.end(), 0);
+            assert(index_degree <= degree);
+            index.push_back(degree - index_degree);
+        }
+    }
+
+    for (auto &index: index_vectors) {
+        Multi_index new_index(index);
+        indices.push_back(new_index);
+    }
+
+    return indices;
+}

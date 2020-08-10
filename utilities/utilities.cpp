@@ -7,8 +7,6 @@
 #include "absl/strings/str_join.h"
 #include "absl/strings/numbers.h"
 #include <algorithm>
-#include <iostream>
-#include <sstream>
 #include <string>
 #include "utilities.h"
 
@@ -23,21 +21,21 @@
 std::vector<std::string> split_string(std::vector<std::string> to_split, const std::string &delim,
                                       const bool drop_delim) {
     std::vector<std::string> tokens;
-    std::string token = "", search_str;
+    std::string token, search_str;
     size_t pos = 0;
     int erase_offset = drop_delim * delim.length();
     int start_offset = 0;
 
-    for (auto str = to_split.begin(); str != to_split.end(); str++) {
+    for (auto &str : to_split) {
         pos = 0;
         start_offset = 0;
         while (pos != std::string::npos) {
             //search_str = (*str).substr(start_offset) ;
-            pos = (*str).substr(start_offset).find(delim);
-            token = (*str).substr(0, pos);
+            pos = str.substr(start_offset).find(delim);
+            token = str.substr(0, pos);
             tokens.push_back(token);
-            (*str).erase(0, pos + erase_offset);
-            start_offset = (1-drop_delim) * delim.length();
+            str.erase(0, pos + erase_offset);
+            start_offset = (1 - drop_delim) * delim.length();
         }
     }
 
@@ -45,7 +43,7 @@ std::vector<std::string> split_string(std::vector<std::string> to_split, const s
 
 }
 
-Polynomial string_to_poly (std::string desc_str) {
+Polynomial string_to_poly(const std::string &desc_str) {
     std::vector<std::string> tokens;
     std::string token;
 
@@ -60,12 +58,12 @@ Polynomial string_to_poly (std::string desc_str) {
     tokens = split_string(tokens, "-", false);
 
     // remove whitespace from each element of tokens
-    for (auto s = tokens.begin(); s != tokens.end(); s++) {
-        s->erase(std::remove_if(s->begin(), s->end(), isspace), s->end());
+    for (auto &token : tokens) {
+        token.erase(std::remove_if(token.begin(), token.end(), isspace), token.end());
     }
 
     // check case that start of string was "+" or "-" In which case tokens will have a spurious leading ""
-    if (tokens[0] == "" && (tokens[1] == "+" || tokens[1] == "-")) {
+    if (tokens[0].empty() && (tokens[1] == "+" || tokens[1] == "-")) {
         tokens.erase(tokens.begin());
     }
 
@@ -77,13 +75,11 @@ Polynomial string_to_poly (std::string desc_str) {
     for (int i = 0; i < len/2; i++) {
         coeff_str = tokens[i*2];
         // if string is "", "+" replace with 1; if string is "-" replace with "-1"; else convert to float
-        if (coeff_str == "" || coeff_str == "+") {
+        if (coeff_str.empty() || coeff_str == "+") {
             coeffs.push_back(1.0);
-        }
-        else if (coeff_str == "-") {
+        } else if (coeff_str == "-") {
             coeffs.push_back(-1.0);
-        }
-        else {
+        } else {
             coeffs.push_back(std::stof(coeff_str));
         }
     }
@@ -93,22 +89,22 @@ Polynomial string_to_poly (std::string desc_str) {
     std::vector<Multi_index> exponents;
     Multi_index m_idx;
 
-    for (int i = 0; i < len/2; i++) {
-        exponents_str.push_back(tokens[i*2 + 1]);
+    for (int i = 0; i < len / 2; i++) {
+        exponents_str.push_back(tokens[i * 2 + 1]);
     }
 
     // Check that coeffs and exponents have the same length
     assert(coeffs.size() == exponents_str.size());
 
     // convert each element of exponents_str into a multi-index using constructor
-    for (auto s=exponents_str.begin(); s!=exponents_str.end(); s++) {
-        m_idx = Multi_index(*s);
+    for (auto &s : exponents_str) {
+        m_idx = Multi_index(s);
         exponents.push_back(m_idx);
     }
 
     // create map of multi-index:coeff pairs
     coefficient_t poly_map;
-    for (int i=0; i<coeffs.size(); i++) {
+    for (int i = 0; i < coeffs.size(); i++) {
         poly_map[exponents[i]] = coeffs[i];
     }
 

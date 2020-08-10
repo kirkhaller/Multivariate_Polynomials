@@ -14,7 +14,7 @@ std::vector<std::string> split_string(std::vector<std::string> to_split, const s
 
 //Multi_index string_to_multi (std::string desc_str);
 
-Polynomial string_to_poly(std::string desc_str);
+Polynomial string_to_poly(const std::string &desc_str);
 
 bool parse_multiindex_string(const std::string &string_in, m_index_t *exponent_out);
 

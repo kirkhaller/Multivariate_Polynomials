@@ -3,7 +3,7 @@
 //
 
 #include "kbnsum.h"
-#include <math.h>
+#include <cmath>
 
 
 KBNSum::KBNSum(double value_in) : sum(value_in), error_sum(0.0) {}

@@ -4,7 +4,7 @@
 #ifndef MULTIVARIATE_POLYNOMIALS_POINT_H
 #define MULTIVARIATE_POLYNOMIALS_POINT_H
 
-#include <math.h>
+#include <cmath>
 #include "Multiindex.h"
 #include <string>
 #include <vector>
@@ -18,15 +18,15 @@ private:
     point_t value;
 
 public:
-    Point(const point_t &point_in);
+    explicit Point(const point_t &point_in);
 
-    std::string description() const;
+    [[nodiscard]] std::string description() const;
 
-    inline int dimension() const { return value.size(); }
+    [[nodiscard]] inline int dimension() const { return value.size(); }
 
-    double get_value(const int index) const;
+    [[nodiscard]] double get_value(int index) const;
 
-    double power(const Multi_index &exponent) const;
+    [[nodiscard]] double power(const Multi_index &exponent) const;
 };
 
 inline bool operator==(const Point &lhs, const Point &rhs) {
