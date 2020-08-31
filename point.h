@@ -22,7 +22,7 @@ public:
 
     [[nodiscard]] std::string description() const;
 
-    [[nodiscard]] inline int dimension() const { return value.size(); }
+    [[nodiscard]] inline unsigned long dimension() const { return value.size(); }
 
     [[nodiscard]] double get_value(int index) const;
 

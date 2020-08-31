@@ -36,7 +36,13 @@ public:
         description = poly_in.description;
     }
 
-    explicit Polynomial(const coefficient_t &map_in) {
+    explicit Polynomial(Polynomial *poly_in) {
+        assert(poly_in != nullptr);
+        coefficients = poly_in->coefficients;
+        describe();
+    }
+
+    explicit Polynomial(coefficient_t &map_in) {
         coefficients = map_in;
         describe();
     }
@@ -60,7 +66,6 @@ public:
         if (coefficients.empty())
             return 0;
 
-        //TODO: Make this the largest, non-zero monomial term's degree.
         return leading_term().exponent.get_degree();
     }
 

@@ -11,18 +11,20 @@ include_directories(include ${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
 
 add_library(Multivariate_Polynomials
-        point.cpp point.h
+        LagrangeSelector.cpp LagrangeSelector.h
+        LinearInterpolationProblem.cpp LinearInterpolationProblem.h
         Multiindex.cpp Multiindex.h
+        point.cpp point.h
         polynomial.cpp polynomial.h
         utilities/kbnsum.cpp utilities/kbnsum.h
         utilities/utilities.cpp utilities/utilities.h
-        LinearInterpolationProblem.cpp LinearInterpolationProblem.h)
+        Lagrange.cpp Lagrange.h)
 
 # 'Google_Tests_run' is the target name
 add_executable(Google_Tests_run
         GoogleTest/PointTests.cpp
         GoogleTest/MultiindexTests.cpp
         GoogleTest/PolynomialTests.cpp
-        )
+        GoogleTest/LinearInterpolationProblemTests.cpp)
 
 target_link_libraries(Google_Tests_run gtest gtest_main Multivariate_Polynomials absl::strings)

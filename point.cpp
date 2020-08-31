@@ -16,7 +16,7 @@ std::string Point::description() const {
         string_out += std::to_string(get_value(index));
         string_out += ", ";
     }
-    string_out += std::to_string(get_value(dimension()-1));
+    string_out += std::to_string(get_value(static_cast<int>(dimension() - 1)));
     string_out += " )";
     return string_out;
 }

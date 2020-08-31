@@ -69,7 +69,6 @@ Polynomial string_to_poly(const std::string &desc_str) {
 
     // extract coefficients- they occur in the even numbered positions of tokens
     int len = tokens.size();
-    double coeff;
     std::string coeff_str;
     std::vector<double> coeffs;
     for (int i = 0; i < len/2; i++) {
@@ -109,8 +108,7 @@ Polynomial string_to_poly(const std::string &desc_str) {
     }
 
     // create polynomial based on poly_map
-    Polynomial poly;
-    poly = Polynomial(poly_map);
+    Polynomial poly(poly_map);
     return poly;
 
 }

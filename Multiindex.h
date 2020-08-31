@@ -77,8 +77,9 @@ inline bool operator<(const Multi_index &lhs, const Multi_index &rhs) {
     return false; // The operators must be equal so lsh < rhs is false
 }
 
-void compute_index_values_to_degree(int degree, int dimension, m_index_t &index, std::vector<m_index_t > &indices_out);
+void compute_index_values_to_degree(unsigned long degree, unsigned long dimension, m_index_t &index,
+                                    std::vector<m_index_t > &indices_out);
 
-std::vector<Multi_index> compute_exponents_to_degree(int degree, int dimension, bool homogeneous);
+std::vector<Multi_index> compute_exponents_to_degree(unsigned long degree, unsigned long dimension, bool homogeneous);
 
 #endif //MULTIVARIATE_POLYNOMIALS_MULTIINDEX_H

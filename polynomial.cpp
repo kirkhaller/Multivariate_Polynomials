@@ -140,7 +140,9 @@ absl::string_view Polynomial::describe() {
 
     for (auto term = coefficients.rbegin(); term != coefficients.rend(); term++) {
         description += connector + std::to_string(term->second) + " x^" + (term->first).description();
-        connector = " + ";
+        if (connector.empty()) {
+            connector = " + ";
+        }
     }
 
     return description;

@@ -7,46 +7,18 @@
 
 #include "absl/container/btree_map.h"
 #include <cassert>
+#include "Lagrange.h"
+#include "LagrangeSelector.h"
 #include "point.h"
 #include "polynomial.h"
 #include <utility>
 #include <vector>
 
-#define d_polynomial_value_tol 0.00000000001
 using namespace absl;
 using namespace std;
 
-// A Lagrange Polynomials is a polynomial which is 1.0 at the point specified,
-// and zero at all other interpolation points.
-struct Lagrange {
-    Point point;
-    Polynomial *polynomial_ptr;
-
-    explicit Lagrange(Point point_in) : point(std::move(point_in)), polynomial_ptr(nullptr) {}
-
-    ~Lagrange() { delete polynomial_ptr; }
-
-    [[nodiscard]] Polynomial *get_polynomial() const { return polynomial_ptr; }
-
-    // Lagrange assumes ownership of the polynomial.
-    void set_polynomial(Polynomial *poly_in) {
-        delete polynomial_ptr;
-        polynomial_ptr = poly_in;
-#ifndef NDEBUG
-        if (polynomial_ptr != nullptr) {
-            assert(fabs(1.0 - polynomial_ptr->evaluate(point)) < d_polynomial_value_tol);
-        }
-#endif
-
-    }
-
-    [[nodiscard]] int get_degree() const {
-        if (polynomial_ptr != nullptr) {
-            return polynomial_ptr->get_degree();
-        }
-        return 0;
-    }
-
+enum LagrangeSelector_e {
+    x_bias, least, hm
 };
 
 /*
@@ -59,7 +31,10 @@ struct Lagrange {
 class LinearInterpolationProblem {
 private:
     // Point processing order matters
-    vector<Lagrange> lagranges;
+    vector<unique_ptr<Lagrange>> lagranges;
+
+    LagrangeSelector_e selector_type = least;
+    unique_ptr<LagrangeSelector> selector;
     btree_map<Multi_index, Polynomial *> errors;
 
     // A mechanism for caching evaluation data, and too investigate performance.
@@ -67,6 +42,7 @@ private:
 
     //These point to data owned above
     btree_map<Polynomial *, btree_map<Point *, double>> evaluation_data;
+
 
 
 public:
@@ -79,10 +55,20 @@ public:
         if (lagranges.empty())
             return -1;
 
-        return lagranges.begin()->point.dimension();
+        return lagranges.begin()->get()->point.dimension();
     }
 
     [[nodiscard]] int get_degree() const;
+
+    void set_selector_type(LagrangeSelector_e type_in);
+
+    // Lagrange Construction Methods
+
+    // degree 0 will mean return lowest degree available.
+    vector<Polynomial *> get_errors_for_degree(int degree);
+
+    void update_errors_for_lagrange(const Lagrange &new_lagrange);
+
 };
 
 

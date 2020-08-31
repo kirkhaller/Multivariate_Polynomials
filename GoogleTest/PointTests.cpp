@@ -9,13 +9,21 @@ namespace {
 
     TEST(point_test, point_creation_test) {
         point_t initial_value{0.0, 1.0, 2.0};
+        point_t initial_value2{0.0, 1.0, 3.0};
         Point point = Point(initial_value);
+        Point point2 = Point(initial_value);
+        Point point3 = Point(initial_value2);
 
         EXPECT_EQ(3, point.dimension());
         EXPECT_EQ(initial_value[0], point.get_value(0));
         EXPECT_EQ(initial_value[1], point.get_value(1));
         EXPECT_EQ(initial_value[2], point.get_value(2));
         EXPECT_DEATH(int value = point.get_value(4), "Index for point out of range");
+
+        EXPECT_TRUE(point == point2);
+        EXPECT_FALSE(point == point3);
+        EXPECT_TRUE(point != point3);
+        EXPECT_FALSE(point != point2);
     }
 
     TEST(point_test, point_evaluation) {

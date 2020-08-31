@@ -9,14 +9,15 @@
 
 
 Multi_index::Multi_index(std::string str) {
-    int begin = 0, end=str.length()-1;
+    unsigned long end = (str.length() > 0 ? str.length() - 1 : 0);
+    unsigned long begin = 0;
     std::vector<std::string> tokens;
 
     // remove any whitespace
-    str.erase( std::remove_if(str.begin(), str.end(), isspace), str.end());
+    str.erase(std::remove_if(str.begin(), str.end(), isspace), str.end());
 
     // exclude any leading and/or trailing parentheses
-    if (str[0] == '(' ) {
+    if (str[0] == '(') {
         begin = 1;
     }
     if (str[end] == ')') {
@@ -130,14 +131,15 @@ Multi_index Multi_index::operator-(const Multi_index &rhs) const {
 }
 
 
-void compute_index_values_to_degree(int degree, int dimension, m_index_t &index, std::vector<m_index_t > &indices_out) {
+void compute_index_values_to_degree(unsigned long degree, unsigned long dimension, m_index_t &index,
+                                    std::vector<m_index_t > &indices_out) {
     std::vector<m_index_t > new_indices;
     for (int count = 0; count < degree; count++) {
         m_index_t new_index(index);
         new_index.push_back(count);
         new_indices.push_back(new_index);
     }
-    index.push_back(degree);
+    index.push_back(static_cast<int &&>(degree));
     new_indices.push_back(index);
 
     if (dimension > 1) {
@@ -152,20 +154,21 @@ void compute_index_values_to_degree(int degree, int dimension, m_index_t &index,
 
 }
 
-std::vector<Multi_index> compute_exponents_to_degree(int degree, int dimension, bool homogeneous) {
+std::vector<Multi_index> compute_exponents_to_degree(unsigned long degree, unsigned long dimension, bool homogeneous) {
+    assert(dimension > 0);
     std::vector<Multi_index> indices;
     std::vector<m_index_t > index_vectors;
     m_index_t working_index;
     working_index.reserve(dimension);
 
-    int working_dimension = (homogeneous ? dimension - 1 : dimension);
+    unsigned long working_dimension = (homogeneous ? dimension - 1 : dimension);
     compute_index_values_to_degree(degree, working_dimension, working_index, index_vectors);
 
     if (homogeneous) {
         for (auto &index : index_vectors) {
             int index_degree = std::accumulate(index.begin(), index.end(), 0);
             assert(index_degree <= degree);
-            index.push_back(degree - index_degree);
+            index.push_back(static_cast<int &&>(degree - index_degree));
         }
     }
 
