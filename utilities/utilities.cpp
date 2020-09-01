@@ -22,13 +22,11 @@ std::vector<std::string> split_string(std::vector<std::string> to_split, const s
                                       const bool drop_delim) {
     std::vector<std::string> tokens;
     std::string token, search_str;
-    size_t pos = 0;
-    int erase_offset = drop_delim * delim.length();
-    int start_offset = 0;
+    unsigned int erase_offset = drop_delim * delim.length();
 
     for (auto &str : to_split) {
-        pos = 0;
-        start_offset = 0;
+        size_t pos = 0;
+        unsigned int start_offset = 0;
         while (pos != std::string::npos) {
             //search_str = (*str).substr(start_offset) ;
             pos = str.substr(start_offset).find(delim);
@@ -45,7 +43,6 @@ std::vector<std::string> split_string(std::vector<std::string> to_split, const s
 
 Polynomial string_to_poly(const std::string &desc_str) {
     std::vector<std::string> tokens;
-    std::string token;
 
     // tokenize desc_str using delimiter "x^"
     tokens.push_back(desc_str);
@@ -86,8 +83,10 @@ Polynomial string_to_poly(const std::string &desc_str) {
     // extract the string representation of the exponents- they occur in the odd numbered positions of tokens
     std::vector<std::string> exponents_str;
     std::vector<Multi_index> exponents;
-    Multi_index m_idx;
 
+    int exp_size = ceil(len / 2);
+    exponents_str.reserve(exp_size);
+    exponents.reserve(exp_size);
     for (int i = 0; i < len / 2; i++) {
         exponents_str.push_back(tokens[i * 2 + 1]);
     }
@@ -97,7 +96,7 @@ Polynomial string_to_poly(const std::string &desc_str) {
 
     // convert each element of exponents_str into a multi-index using constructor
     for (auto &s : exponents_str) {
-        m_idx = Multi_index(s);
+        Multi_index m_idx(s);
         exponents.push_back(m_idx);
     }
 

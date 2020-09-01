@@ -35,7 +35,7 @@ private:
 
     LagrangeSelector_e selector_type = least;
     unique_ptr<LagrangeSelector> selector;
-    btree_map<Multi_index, Polynomial *> errors;
+    btree_map<Multi_index, unique_ptr<Polynomial>> errors;
 
     // A mechanism for caching evaluation data, and too investigate performance.
     std::vector<Point> evaluation_grid;
@@ -65,9 +65,16 @@ public:
     // Lagrange Construction Methods
 
     // degree 0 will mean return lowest degree available.
-    vector<Polynomial *> get_errors_for_degree(int degree);
+    void add_errors_to_degree(int degree);
 
     void update_errors_for_lagrange(const Lagrange &new_lagrange);
+
+    Lagrange *select_point_to_process();
+
+    // These are the main routines
+    void reset();
+
+    void solve();
 
 };
 

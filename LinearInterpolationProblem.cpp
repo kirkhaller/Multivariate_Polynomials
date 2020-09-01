@@ -19,9 +19,7 @@ LinearInterpolationProblem::~LinearInterpolationProblem() {
         lagrange->set_polynomial(nullptr);
     }
 
-    for (auto &error: errors) {
-        delete error.second;
-    }
+    errors.clear();
 }
 
 int LinearInterpolationProblem::get_degree() const {
@@ -73,9 +71,7 @@ void LinearInterpolationProblem::set_selector_type(LagrangeSelector_e type_in) {
     }
 }
 
-
-vector<Polynomial *> LinearInterpolationProblem::get_errors_for_degree(int degree) {
-    vector<Polynomial *> vector_out;
+void LinearInterpolationProblem::add_errors_to_degree(int degree) {
 
     int maximum_degree = (errors.empty() ? -1 : errors.rbegin()->first.get_degree());
 
@@ -96,18 +92,54 @@ vector<Polynomial *> LinearInterpolationProblem::get_errors_for_degree(int degre
                         error -= correction;
                     }
                 }
-                errors[exponent] = new Polynomial(error);
+                if (!error.is_zero()) {
+                    errors[exponent] = make_unique<Polynomial>(error);
+                }
             }
         }
     }
+}
 
-    for (auto &error: errors) {
-        if (error.first.get_degree() == degree) {
-            vector_out.push_back(error.second);
+
+Lagrange *LinearInterpolationProblem::select_point_to_process() {
+    double max_value = -1;
+    Lagrange *lagrange_out = nullptr;
+    for (auto &lagrange: lagranges) {
+        if (!lagrange->is_set()) {
+            // evaluate_point_for_selection returns a positive value.
+            double point_value = selector->evaluate_point_for_selection(lagrange->point);
+            if (point_value > max_value) {
+                max_value = point_value;
+                lagrange_out = lagrange.get();
+            }
         }
     }
+    return lagrange_out;
+}
 
-    return vector_out;
+void LinearInterpolationProblem::reset() {
+    for (auto &lagrange: lagranges) {
+        lagrange->set_polynomial(nullptr);
+    }
+
+    errors.clear();
+    evaluation_data.clear();
+}
+
+void LinearInterpolationProblem::solve() {
+
+    for (int count = 0; count < lagranges.size(); count++) {
+        Lagrange *lagrange = select_point_to_process();
+        assert(lagrange != nullptr);
+
+        lagrange->polynomial_ptr = selector->select_lagrange_for_point(lagrange->point);
+        assert(lagrange->is_set());
+
+        update_errors_for_lagrange(*lagrange);
+        if (errors.empty() || errors.rbegin()->first.get_degree() < lagrange->get_degree() + 1) {
+            add_errors_to_degree(lagrange->get_degree() + 1);
+        }
+    }
 }
 
 

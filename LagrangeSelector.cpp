@@ -7,7 +7,7 @@
 
 double XBiasSelector::evaluate_point_for_selection(Point &point_in) {
     if (!candidates->empty()) {
-        return candidates->begin()->second->evaluate(point_in);
+        return fabs(candidates->begin()->second->evaluate(point_in));
     }
     return LagrangeSelector::evaluate_point_for_selection(point_in);
 }

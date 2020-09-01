@@ -17,7 +17,7 @@
 using namespace absl;
 using namespace std;
 
-#define leading_term_polynomial_map_t absl::btree_map<Multi_index, Polynomial *>
+#define leading_term_polynomial_map_t absl::btree_map<Multi_index, unique_ptr<Polynomial>>
 
 class LagrangeSelector {
 
