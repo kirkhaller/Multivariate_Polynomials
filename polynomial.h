@@ -104,12 +104,12 @@ public:
         PolynomialBracketProxy(Polynomial &poly_in, Multi_index &index_in) : poly(poly_in), index(index_in) {}
 
         //This is the get operator
-        operator double() {
+        operator double() { // NOLINT(google-explicit-constructor,readability-make-member-function-const)
             return poly.get_coefficient(index);
         }
 
         //This is the set operator
-        double &operator=(const double value) {
+        double &operator=(const double value) { // NOLINT(misc-unconventional-assign-operator)
             return poly.set_coefficient(index, value);
         }
 
