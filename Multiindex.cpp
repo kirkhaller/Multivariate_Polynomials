@@ -9,48 +9,9 @@
 
 
 Multi_index::Multi_index(std::string str) {
-    unsigned long end = (str.length() > 0 ? str.length() - 1 : 0);
-    unsigned long begin = 0;
-    std::vector<std::string> tokens;
-
-    // remove any whitespace
-    str.erase(std::remove_if(str.begin(), str.end(), isspace), str.end());
-
-    // exclude any leading and/or trailing parentheses
-    if (str[0] == '(') {
-        begin = 1;
+    if (!parse_multiindex_string(str, &m_index)) {
+        throw std::invalid_argument("Invalid String: " + str);
     }
-    if (str[end] == ')') {
-        end -= 1;
-    }
-    str = str.substr(begin, end - begin + 1);
-
-    // split str on "," The resulting vector of strings will contain string representations of the indices
-    tokens.push_back(str);  //initialize tokens with the str to split. Required to call split_string
-    tokens = split_string(tokens, ",", true);
-
-    // convert each element of tokens to an integer
-    int exponent;
-    std::vector<int> exponents;
-    for (auto &token : tokens) {
-        exponent = std::stoi(token);
-        exponents.push_back(exponent);
-    }
-
-    // TODO: try to use the constructor that uses the m_index_t as a parameter
-    // Now set object properties based on values in exponents.
-    m_index = m_index_t(exponents);
-    m_index.shrink_to_fit();
-
-    // check that values are all non-negative
-    for (int index = 0; index < dimension(); index++) {
-        if (get_value(index) < 0) {
-            throw std::invalid_argument("Multi Indices must be non-negative.");
-        }
-    }
-
-    // sum the values of m_index to calculate the degree of the monomial represented by m_index
-    degree = std::accumulate(m_index.begin(), m_index.end(), 0);
 }
 
 Multi_index::Multi_index(const m_index_t &index_in) {

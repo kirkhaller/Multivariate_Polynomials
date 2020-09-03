@@ -8,7 +8,7 @@
 #include "point.h"
 #include "polynomial.h"
 
-#define d_polynomial_value_tol 0.00000000001
+#define d_polynomial_value_tol 0.000000001
 
 // A Lagrange Polynomials is a polynomial which is 1.0 at the point specified,
 // and zero at all other interpolation points.

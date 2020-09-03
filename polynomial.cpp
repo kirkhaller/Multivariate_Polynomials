@@ -139,12 +139,27 @@ absl::string_view Polynomial::describe() {
     description = "";
 
     for (auto term = coefficients.rbegin(); term != coefficients.rend(); term++) {
-        description += connector + std::to_string(term->second) + " x^" + (term->first).description();
-        if (connector.empty()) {
-            connector = " + ";
+        if (fabs(term->second) > d_polynomial_coefficient_tol) {
+            description += connector + std::to_string(term->second) + " x^" + (term->first).description();
+            if (connector.empty()) {
+                connector = " + ";
+            }
         }
     }
 
     return description;
+}
+
+void Polynomial::add_multiply(double scalar, const Polynomial &poly_in) {
+    for (auto &term: poly_in.coefficients) {
+        double current_value = get_coefficient(term.first);
+        KBNSum sum(current_value);
+        sum.add(scalar * term.second);
+        set_coefficient(term.first, sum.value());
+    }
+}
+
+void Polynomial::subtract_multiply(double scalar, const Polynomial &poly_in) {
+    add_multiply(-scalar, poly_in);
 }
 

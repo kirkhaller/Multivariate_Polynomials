@@ -85,6 +85,10 @@ public:
     absl::string_view describe();
 
     // operator assignments
+    void add_multiply(double scalar, const Polynomial &poly_in);
+
+    void subtract_multiply(double scalar, const Polynomial &poly_in);
+
     Polynomial operator+(const Polynomial &rh) const;
 
     Polynomial operator-(const Polynomial &rh) const;
@@ -162,13 +166,12 @@ public:
         return PolynomialBracketProxy(*this, index);
     }
 
-    // These functions are added for testing, and to make the implementation of the PolyBracketProxy cleaner.
     double &set_coefficient(const Multi_index &exponent, double coefficient) {
         if (!coefficients.empty() && coefficients.begin()->first.dimension() != exponent.dimension())
             throw std::invalid_argument("Exponent's dimensions mismatch rest of polynomial.");
-        coefficients[exponent] = coefficient;
+        coefficients.insert_or_assign(exponent, coefficient);
 #ifndef NDEBUG
-        describe();
+        //describe();
 #endif
         return coefficients[exponent];
     }

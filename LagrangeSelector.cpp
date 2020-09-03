@@ -46,13 +46,14 @@ unique_ptr<Polynomial> LeastSelector::select_lagrange_for_point(Point &point_in)
         Polynomial polynomial_out;
         double sum = 0;
         for (auto &candidate : *candidates) {
-            double value = candidate.second->evaluate(point_in);
-            sum += value * value;
-            Polynomial term(*candidate.second);
-            term *= value;
-            polynomial_out += term;
+            if (candidate.first.get_degree() == d) {
+                double value = candidate.second->evaluate(point_in);
+                sum += value * value;
+                polynomial_out.add_multiply(value, *candidate.second);
+            }
         }
         if (sum > d_polynomial_value_tol) {
+            polynomial_out *= 1.0 / sum;
             return make_unique<Polynomial>(polynomial_out);
         }
     }

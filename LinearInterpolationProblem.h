@@ -33,7 +33,7 @@ private:
     // Point processing order matters
     vector<unique_ptr<Lagrange>> lagranges;
 
-    LagrangeSelector_e selector_type = least;
+    LagrangeSelector_e selector_type = x_bias;
     unique_ptr<LagrangeSelector> selector;
     btree_map<Multi_index, unique_ptr<Polynomial>> errors;
 
@@ -42,7 +42,6 @@ private:
 
     //These point to data owned above
     btree_map<Polynomial *, btree_map<Point *, double>> evaluation_data;
-
 
 
 public:
@@ -64,6 +63,8 @@ public:
 
     // Lagrange Construction Methods
 
+    void update_lagranges_for_new_lagrange(const Lagrange &new_lagrange);
+
     // degree 0 will mean return lowest degree available.
     void add_errors_to_degree(int degree);
 
@@ -75,6 +76,9 @@ public:
     void reset();
 
     void solve();
+
+    //Validation Methods
+    [[nodiscard]] bool valid_results() const;
 
 };
 
