@@ -27,8 +27,6 @@ protected:
 public:
     explicit LagrangeSelector(leading_term_polynomial_map_t *candidates_in) : candidates(candidates_in) {}
 
-    virtual double evaluate_point_for_selection(Point &point_in) { return 0.0; }
-
     // Calling function owns the polynomial.
     virtual unique_ptr<Polynomial> select_lagrange_for_point(Point &point_in) {
         assert(true); // Getting here is an error.
@@ -44,8 +42,6 @@ class XBiasSelector : public LagrangeSelector {
 public:
     explicit XBiasSelector(leading_term_polynomial_map_t *candidates_in) : LagrangeSelector(candidates_in) {}
 
-    double evaluate_point_for_selection(Point &point_in) override;
-
     unique_ptr<Polynomial> select_lagrange_for_point(Point &point_in) override;
 };
 
@@ -57,8 +53,6 @@ class LeastSelector : public LagrangeSelector {
 public:
     explicit LeastSelector(leading_term_polynomial_map_t *candidates_in) : LagrangeSelector(candidates_in) {}
 
-    double evaluate_point_for_selection(Point &point_in) override;
-
     unique_ptr<Polynomial> select_lagrange_for_point(Point &point_in) override;
 };
 
@@ -67,8 +61,6 @@ class HMSelector : public LagrangeSelector {
 
 public:
     explicit HMSelector(leading_term_polynomial_map_t *candidates_in) : LagrangeSelector(candidates_in) {}
-
-    double evaluate_point_for_selection(Point &point_in) override;
 
     unique_ptr<Polynomial> select_lagrange_for_point(Point &point_in) override;
 };

@@ -17,7 +17,8 @@ namespace {
             points.reserve(max_rows * max_columns);
             for (int rows = 0; rows <= max_rows; rows++) {
                 for (int columns = 0; columns <= max_columns; columns++) {
-                    point_t point_vec = {double(rows) / max_rows, double(columns) / max_columns};
+                    point_t point_vec = {2.0 * double(rows) / max_rows - 1.0,
+                                         2.0 * double(columns) / max_columns - 1.0};
                     points.emplace_back(point_vec);
                 }
             }

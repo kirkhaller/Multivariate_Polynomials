@@ -3,39 +3,19 @@
 //
 
 #include "LagrangeSelector.h"
-
-
-double XBiasSelector::evaluate_point_for_selection(Point &point_in) {
-    if (!candidates->empty()) {
-        return fabs(candidates->begin()->second->evaluate(point_in));
-    }
-    return LagrangeSelector::evaluate_point_for_selection(point_in);
-}
+#define d_selector_tolerance 0.000000001
 
 unique_ptr<Polynomial> XBiasSelector::select_lagrange_for_point(Point &point_in) {
     assert(!candidates->empty());
     for (auto &candidate : *candidates) {
         double value = candidate.second->evaluate(point_in);
-        if (fabs(value) > d_polynomial_value_tol) {
+        if (fabs(value) > d_selector_tolerance) {
             Polynomial polynomial_out(*candidate.second);
             polynomial_out *= 1.0 / value;
             return make_unique<Polynomial>(polynomial_out);
         }
     }
     return LagrangeSelector::select_lagrange_for_point(point_in);
-}
-
-double LeastSelector::evaluate_point_for_selection(Point &point_in) {
-    assert(!candidates->empty());
-    int lowest_degree = candidates->begin()->first.get_degree();
-    double sum = 0.0;
-    for (auto &candidate : *candidates) {
-        if (candidate.first.get_degree() == lowest_degree) {
-            double value = candidate.second->evaluate(point_in);
-            sum += value * value;
-        }
-    }
-    return sum;
 }
 
 unique_ptr<Polynomial> LeastSelector::select_lagrange_for_point(Point &point_in) {
@@ -52,17 +32,13 @@ unique_ptr<Polynomial> LeastSelector::select_lagrange_for_point(Point &point_in)
                 polynomial_out.add_multiply(value, *candidate.second);
             }
         }
-        if (sum > d_polynomial_value_tol) {
+        if (sum > d_selector_tolerance) {
             polynomial_out *= 1.0 / sum;
             return make_unique<Polynomial>(polynomial_out);
         }
     }
 
     return LagrangeSelector::select_lagrange_for_point(point_in);
-}
-
-double HMSelector::evaluate_point_for_selection(Point &point_in) {
-    return LagrangeSelector::evaluate_point_for_selection(point_in);
 }
 
 unique_ptr<Polynomial> HMSelector::select_lagrange_for_point(Point &point_in) {

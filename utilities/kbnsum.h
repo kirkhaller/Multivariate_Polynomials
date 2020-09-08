@@ -5,6 +5,7 @@
 #ifndef MULTIVARIATE_POLYNOMIALS_KBNSUM_H
 #define MULTIVARIATE_POLYNOMIALS_KBNSUM_H
 
+
 class KBNSum {
 private:
     double sum = 0.0;

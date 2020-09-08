@@ -36,6 +36,7 @@ private:
     LagrangeSelector_e selector_type = x_bias;
     unique_ptr<LagrangeSelector> selector;
     btree_map<Multi_index, unique_ptr<Polynomial>> errors;
+    int max_error_degree;
 
     // A mechanism for caching evaluation data, and too investigate performance.
     std::vector<Point> evaluation_grid;
@@ -69,8 +70,6 @@ public:
     void add_errors_to_degree(int degree);
 
     void update_errors_for_lagrange(const Lagrange &new_lagrange);
-
-    Lagrange *select_point_to_process();
 
     // These are the main routines
     void reset();

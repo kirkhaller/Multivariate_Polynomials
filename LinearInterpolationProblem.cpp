@@ -7,7 +7,7 @@
 #include <memory>
 #include "LinearInterpolationProblem.h"
 
-LinearInterpolationProblem::LinearInterpolationProblem(const vector<Point> &points_in) {
+LinearInterpolationProblem::LinearInterpolationProblem(const vector<Point> &points_in) : max_error_degree(-1) {
 
     for (const auto &point: points_in) {
         lagranges.push_back(make_unique<Lagrange>(point));
@@ -93,12 +93,10 @@ void LinearInterpolationProblem::set_selector_type(LagrangeSelector_e type_in) {
 
 void LinearInterpolationProblem::add_errors_to_degree(int degree) {
 
-    int maximum_degree = (errors.empty() ? -1 : errors.rbegin()->first.get_degree());
-
-    if (degree > maximum_degree) {
+    if (degree > max_error_degree) {
         // Add error terms to minimum degree
         int dimension = int(lagranges.begin()->get()->point.dimension());
-        for (int d = maximum_degree + 1; d <= degree; d++) {
+        for (int d = max_error_degree + 1; d <= degree; d++) {
             auto collection_at_degree = compute_exponents_to_degree(d, dimension, true);
             for (auto &exponent: collection_at_degree) {
                 Polynomial error;
@@ -116,23 +114,8 @@ void LinearInterpolationProblem::add_errors_to_degree(int degree) {
             }
         }
     }
-}
 
-
-Lagrange *LinearInterpolationProblem::select_point_to_process() {
-    double max_value = -1;
-    Lagrange *lagrange_out = nullptr;
-    for (auto &lagrange: lagranges) {
-        if (!lagrange->is_set()) {
-            // evaluate_point_for_selection returns a positive value.
-            double point_value = selector->evaluate_point_for_selection(lagrange->point);
-            if (point_value > max_value) {
-                max_value = point_value;
-                lagrange_out = lagrange.get();
-            }
-        }
-    }
-    return lagrange_out;
+    max_error_degree = degree;
 }
 
 void LinearInterpolationProblem::reset() {
@@ -142,20 +125,22 @@ void LinearInterpolationProblem::reset() {
 
     errors.clear();
     evaluation_data.clear();
+    max_error_degree = -1;
     add_errors_to_degree(0);
 }
 
 void LinearInterpolationProblem::solve() {
 
-    for (int count = 0; count < lagranges.size(); count++) {
-        Lagrange *lagrange = select_point_to_process();
-        assert(lagrange != nullptr);
+#ifndef NDEBUG
+    int count = 0;
+#endif
 
+    for (auto &lagrange : lagranges) {
         lagrange->polynomial_ptr = selector->select_lagrange_for_point(lagrange->point);
         assert(lagrange->is_set());
 
 #ifndef NDEBUG
-        cout << "For Count: " << count;
+        cout << "For Count: " << count++;
         cout << "  Point: " << lagrange->point.description();
         cout << "  New Lagrange: " << lagrange->get_polynomial()->describe() << '\n';
 #endif

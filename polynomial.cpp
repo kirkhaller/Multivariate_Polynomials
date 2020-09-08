@@ -140,7 +140,8 @@ absl::string_view Polynomial::describe() {
 
     for (auto term = coefficients.rbegin(); term != coefficients.rend(); term++) {
         if (fabs(term->second) > d_polynomial_coefficient_tol) {
-            description += connector + std::to_string(term->second) + " x^" + (term->first).description();
+            double value = term->second;
+            description += connector + std::to_string(value) + " x^" + (term->first).description();
             if (connector.empty()) {
                 connector = " + ";
             }

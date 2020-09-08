@@ -13,7 +13,7 @@
 #include "point.h"
 
 
-#define d_polynomial_coefficient_tol 0.00000000001
+#define d_polynomial_coefficient_tol 0.000000001
 #define coefficient_t absl::btree_map<Multi_index, double>
 
 struct monomial_term {
