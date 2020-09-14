@@ -10,17 +10,19 @@
 // Computes a transform to take a box defined by the lower left and upper right bounds, and mapping it to
 // the cube [-1,1]^d.
 class Transform {
-    std::shared_ptr<Point> scale;
-    std::shared_ptr<Point> translation;
+    std::unique_ptr<Point> scale;
+    std::unique_ptr<Point> translation;
 
 public:
     Transform() : scale(nullptr), translation(nullptr) {}
 
-    Transform(Point &lower_left, Point &upper_right);
+    Transform(const Point &lower_left, const Point &upper_right) : scale(nullptr), translation(nullptr) {
+        instantiate_from_extents(lower_left, upper_right);
+    }
 
-    explicit Transform(const std::vector<Point> &points_in);
+    void instantiate_from_extents(const Point &lower_left, const Point &upper_right);
 
-    Transform(Transform &xform_in) = default;
+    void instantiate_from_points(const std::vector<Point> &points_in);
 
     void apply(Point &point);
 

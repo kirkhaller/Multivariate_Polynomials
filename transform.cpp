@@ -5,7 +5,7 @@
 #include "transform.h"
 
 
-Transform::Transform(Point &lower_left, Point &upper_right) {
+void Transform::instantiate_from_extents(const Point &lower_left, const Point &upper_right) {
     assert(lower_left.dimension() == upper_right.dimension());
     Point scale_test(lower_left), translation_test(upper_right);
     bool set_scale = false;
@@ -29,15 +29,15 @@ Transform::Transform(Point &lower_left, Point &upper_right) {
     }
 
     if (set_translation) {
-        translation = std::make_shared<Point>(translation_test);
+        translation = std::make_unique<Point>(translation_test);
     }
     if (set_scale) {
-        scale = std::make_shared<Point>(scale_test);
+        scale = std::make_unique<Point>(scale_test);
     }
 }
 
 
-Transform::Transform(const std::vector<Point> &points_in) {
+void Transform::instantiate_from_points(const std::vector<Point> &points_in) {
     if (points_in.empty()) {
         return;
     }
@@ -60,32 +60,8 @@ Transform::Transform(const std::vector<Point> &points_in) {
         }
     }
 
-    bool set_scale = false;
-    bool set_translation = false;
-    point_t translation_test, scale_test;
-    for (int index = 0; index < upper.size(); index++) {
-        double upper_value = upper[index];
-        double lower_value = lower[index];
-        double average = (upper_value + lower_value) / 2.0;
-        double differance = (upper_value - lower_value) / 2.0;
-        assert(differance > 0);
-        double scale_value = std::max(1.0, differance);
-        if (!set_translation && fabs(differance) > d_point_tolerance) {
-            set_translation = true;
-        }
-        if (!set_scale && scale_value != 1.0) {
-            set_scale = true;
-        }
-        translation_test.push_back(average);
-        scale_test.push_back(scale_value);
-    }
-
-    if (set_translation) {
-        translation = std::make_shared<Point>(translation_test);
-    }
-    if (set_scale) {
-        scale = std::make_shared<Point>(scale_test);
-    }
+    Point lower_left(lower), upper_right(upper);
+    instantiate_from_extents(lower_left, upper_right);
 }
 
 void Transform::apply(Point &point) {

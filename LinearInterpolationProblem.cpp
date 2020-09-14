@@ -13,7 +13,7 @@ LinearInterpolationProblem::LinearInterpolationProblem(const vector<Point> &poin
         lagranges.push_back(make_unique<Lagrange>(point));
     }
 
-    xform = Transform(points_in);
+    xform.instantiate_from_points(points_in);
 
     for (auto &lagrange: lagranges) {
         xform.apply(lagrange->point);
