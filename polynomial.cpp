@@ -119,6 +119,22 @@ Polynomial &Polynomial::operator*=(double value) {
     return *this;
 }
 
+bool Polynomial::operator==(Polynomial &rhs) const {
+    for (auto &term : coefficients) {
+        if (fabs(rhs.get_coefficient(term.first) - term.second) > d_polynomial_coefficient_tol) {
+            return false;
+        }
+    }
+
+    for (auto &term : rhs.coefficients) {
+        if (fabs(get_coefficient(term.first) - term.second) > d_polynomial_coefficient_tol) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 monomial_term Polynomial::leading_term() const {
     monomial_term term_out;
 
@@ -162,5 +178,47 @@ void Polynomial::add_multiply(double scalar, const Polynomial &poly_in) {
 
 void Polynomial::subtract_multiply(double scalar, const Polynomial &poly_in) {
     add_multiply(-scalar, poly_in);
+}
+
+void Polynomial::clear_zero_terms() {
+    for (auto term = coefficients.begin(), next_term = term; term != coefficients.end(); term = next_term) {
+        ++next_term;
+        if (fabs(term->second) < d_polynomial_coefficient_tol) {
+            coefficients.erase(term);
+        }
+    }
+}
+
+Polynomial::quotient_remainder Polynomial::divide(Polynomial &poly_in) const {
+    quotient_remainder return_data;
+    return_data.remainder = Polynomial(*this);
+    return_data.quotient = Polynomial();
+
+    monomial_term leading_term_in = poly_in.leading_term();
+    Multi_index working_term = leading_term().exponent;
+    [[maybe_unused]] auto reverse_iterator = return_data.remainder.coefficients.find(leading_term().exponent);
+    while (leading_term_in.exponent < working_term) {
+        try {
+            Multi_index dividing_term = working_term - leading_term_in.exponent;
+            double value = reverse_iterator->second / leading_term_in.coefficient;
+            return_data.quotient[dividing_term] = value;
+            Polynomial working_poly = poly_in.multiply_by_monomial(dividing_term, value);
+            return_data.remainder -= working_poly;
+            return_data.remainder.describe();
+        }
+        catch (std::range_error &e) {
+
+        } // If the multi index subtraction is not valid, do nothing.
+
+        // Need to find the term, since the subtraction above may invalidate the iterator
+        // The Find operator returns an iterator, but can not compare to rend() so see if we are at the
+        // beginning.
+        if (working_term == return_data.remainder.coefficients.begin()->first) {
+            return return_data;
+        }
+        reverse_iterator = --return_data.remainder.coefficients.find(working_term);
+        working_term = reverse_iterator->first;
+    }
+    return return_data;
 }
 

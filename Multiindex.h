@@ -15,12 +15,12 @@ class Multi_index {
 
 private:
     m_index_t m_index;
-    int degree;
+    int degree{};
 
 public:
     Multi_index() : degree(-1), m_index({}) {};
 
-    explicit Multi_index(std::string str);
+    explicit Multi_index(std::string &str);
 
     explicit Multi_index(const m_index_t &index_in);
 
@@ -34,6 +34,10 @@ public:
     [[nodiscard]] int get_value(int index) const;
 
     [[nodiscard]] int get_degree() const;
+
+    [[nodiscard]] Multi_index least_common_multiple(Multi_index &other) const;
+
+    [[nodiscard]] bool divides(Multi_index &other) const;
 
     Multi_index operator+(const Multi_index &rhs) const;
 

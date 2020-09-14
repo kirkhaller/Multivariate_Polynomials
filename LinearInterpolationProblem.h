@@ -11,6 +11,7 @@
 #include "LagrangeSelector.h"
 #include "point.h"
 #include "polynomial.h"
+#include "transform.h"
 #include <utility>
 #include <vector>
 
@@ -37,6 +38,9 @@ private:
     unique_ptr<LagrangeSelector> selector;
     btree_map<Multi_index, unique_ptr<Polynomial>> errors;
     int max_error_degree;
+
+    // To address tolerance concerns, will keep data within [-1,1]^d cube.
+    Transform xform;
 
     // A mechanism for caching evaluation data, and too investigate performance.
     std::vector<Point> evaluation_grid;

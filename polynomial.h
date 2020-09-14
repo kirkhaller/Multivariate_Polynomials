@@ -21,6 +21,7 @@ struct monomial_term {
     double coefficient;
 };
 
+
 class Polynomial {
 private:
     coefficient_t coefficients;
@@ -78,11 +79,17 @@ public:
 
     [[nodiscard]] bool is_zero() const;
 
+    void clear_zero_terms();
+
     [[nodiscard]] double evaluate(const Point &point) const;
 
     [[nodiscard]] Polynomial derivative(int direction) const;
 
     absl::string_view describe();
+
+    struct quotient_remainder;
+
+    quotient_remainder divide(Polynomial &poly_in) const;
 
     // operator assignments
     void add_multiply(double scalar, const Polynomial &poly_in);
@@ -98,6 +105,8 @@ public:
     Polynomial &operator-=(const Polynomial &rhs);
 
     Polynomial &operator*=(double scale);
+
+    bool operator==(Polynomial &rhs) const;
 
     // A structure to allow get/set using the bracket operator.
     // Thanks to: andreagriffini.com
@@ -182,5 +191,9 @@ private:
     Polynomial multiply_by_monomial(Multi_index &index, double coefficient);
 };
 
+struct Polynomial::quotient_remainder {
+    Polynomial remainder;
+    Polynomial quotient;
+};
 
 #endif //MULTIVARIATE_POLYNOMIALS_POLYNOMIAL_H

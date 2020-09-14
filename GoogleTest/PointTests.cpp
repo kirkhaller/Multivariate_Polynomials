@@ -4,6 +4,7 @@
 
 #include "gtest/gtest.h"
 #include "../point.h"
+#include "../transform.h"
 
 namespace {
 
@@ -64,6 +65,114 @@ namespace {
         EXPECT_EQ(half_y.power(index_11), 0);
         EXPECT_EQ(x_plus_y.power(index_11), 1);
 
+    }
+
+    TEST(transform_test, simple_test) {
+        Point upper_right({1, 1, 1});
+        Point lower_left({-1, -1, -1});
+        Point center({0, 0, 0});
+        Point copy_upper_right(upper_right);
+        Point copy_lower_left(lower_left);
+        Point copy_center(center);
+
+        Transform trans(lower_left, upper_right);
+        trans.apply(copy_upper_right);
+        trans.apply(copy_lower_left);
+        trans.apply(copy_center);
+        EXPECT_EQ(upper_right, copy_upper_right);
+        EXPECT_EQ(lower_left, copy_lower_left);
+        EXPECT_EQ(center, copy_center);
+
+        trans.invert(copy_upper_right);
+        trans.invert(copy_lower_left);
+        trans.invert(copy_center);
+        EXPECT_EQ(upper_right, copy_upper_right);
+        EXPECT_EQ(lower_left, copy_lower_left);
+        EXPECT_EQ(center, copy_center);
+
+        EXPECT_DEATH(Transform trans_bad(upper_right, lower_left), "");
+        EXPECT_DEATH(Transform trans_bad2(upper_right, upper_right), "");
+    }
+
+    TEST(transform_test, scale_test) {
+        Point upper_right({2, 2, 2});
+        Point lower_left({-2, -2, -2});
+        Point center({0, 0, 0});
+        Point original_upper_right(upper_right);
+        Point original_lower_left(lower_left);
+        Point original_center(center);
+        Point cube_upper_right({1, 1, 1});
+        Point cube_lower_left({-1, -1, -1});
+        Point cube_center(center);
+
+        Transform trans(lower_left, upper_right);
+        trans.apply(lower_left);
+        trans.apply(upper_right);
+        trans.apply(center);
+        EXPECT_EQ(upper_right, cube_upper_right);
+        EXPECT_EQ(lower_left, cube_lower_left);
+        EXPECT_EQ(center, cube_center);
+
+        trans.invert(upper_right);
+        trans.invert(lower_left);
+        trans.invert(center);
+        EXPECT_EQ(upper_right, original_upper_right);
+        EXPECT_EQ(lower_left, original_lower_left);
+        EXPECT_EQ(center, original_center);
+    }
+
+    TEST(transform_test, translate_test) {
+        Point upper_right({2, 2, 2});
+        Point lower_left({0, 0, 0});
+        Point center({1, 1, 1});
+        Point original_upper_right(upper_right);
+        Point original_lower_left(lower_left);
+        Point original_center(center);
+        Point cube_upper_right({1, 1, 1});
+        Point cube_lower_left({-1, -1, -1});
+        Point cube_center({0, 0, 0});
+
+        Transform trans(lower_left, upper_right);
+        trans.apply(lower_left);
+        trans.apply(upper_right);
+        trans.apply(center);
+        EXPECT_EQ(upper_right, cube_upper_right);
+        EXPECT_EQ(lower_left, cube_lower_left);
+        EXPECT_EQ(center, cube_center);
+
+        trans.invert(upper_right);
+        trans.invert(lower_left);
+        trans.invert(center);
+        EXPECT_EQ(upper_right, original_upper_right);
+        EXPECT_EQ(lower_left, original_lower_left);
+        EXPECT_EQ(center, original_center);
+    }
+
+    TEST(transform_test, scale_and_translate_test) {
+        Point upper_right({2, 3, 4});
+        Point lower_left({0, 0, 0});
+        Point center({1, 1.5, 2});
+        Point original_upper_right(upper_right);
+        Point original_lower_left(lower_left);
+        Point original_center(center);
+        Point cube_upper_right({1, 1, 1});
+        Point cube_lower_left({-1, -1, -1});
+        Point cube_center({0, 0, 0});
+
+        Transform trans(lower_left, upper_right);
+        trans.apply(lower_left);
+        trans.apply(upper_right);
+        trans.apply(center);
+        EXPECT_EQ(upper_right, cube_upper_right);
+        EXPECT_EQ(lower_left, cube_lower_left);
+        EXPECT_EQ(center, cube_center);
+
+        trans.invert(upper_right);
+        trans.invert(lower_left);
+        trans.invert(center);
+        EXPECT_EQ(upper_right, original_upper_right);
+        EXPECT_EQ(lower_left, original_lower_left);
+        EXPECT_EQ(center, original_center);
     }
 
 }

@@ -18,7 +18,7 @@ add_library(Multivariate_Polynomials
         polynomial.cpp polynomial.h
         utilities/kbnsum.cpp utilities/kbnsum.h
         utilities/utilities.cpp utilities/utilities.h
-        Lagrange.cpp Lagrange.h)
+        Lagrange.cpp Lagrange.h GroebnerBasis.cpp GroebnerBasis.h transform.cpp transform.h)
 
 # 'Google_Tests_run' is the target name
 add_executable(Google_Tests_run

@@ -188,4 +188,29 @@ namespace {
         EXPECT_EQ(poly3da.evaluate(point3d_001), 5);
     }
 
+    TEST_F(PolynomialTest, TestPolynomialDivide) {
+        Polynomial cubic("1 x^(3,0) + 3 x^(2,1) + 3 x^(1,2) + 1 x^(0,3)");
+        Polynomial linear("1.0 x^(1,0) + 1.0 x^(0,1)");
+
+        Polynomial::quotient_remainder result = linear.divide(cubic);
+        EXPECT_TRUE(result.remainder == linear);
+        EXPECT_TRUE(result.quotient.is_zero());
+
+        Polynomial quotient("1.0 x^(2,0) + 2.0 x^(1,1) + 1.0 x^(0,2)");
+        result = cubic.divide(linear);
+        result.quotient.describe();
+        result.remainder.describe();
+        EXPECT_TRUE(result.remainder.is_zero());
+        EXPECT_TRUE(result.quotient == quotient);
+
+        Polynomial new_quotient("1.0 x^(2,0) - 1.0 x^(1,1) + 1.0 x^(0,2)");
+        Polynomial new_cubic("1.0 x^(3,0) + 1 x^(0,0)");
+        Polynomial new_remainder("1 x^(0,0) - 1 x^(0,3)");
+        result = new_cubic.divide(linear);
+        result.quotient.describe();
+        result.remainder.describe();
+        EXPECT_TRUE(result.remainder == new_remainder);
+        EXPECT_TRUE(result.quotient == new_quotient);
+    }
+
 }

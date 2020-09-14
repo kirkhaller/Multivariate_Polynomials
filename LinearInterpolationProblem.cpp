@@ -13,6 +13,12 @@ LinearInterpolationProblem::LinearInterpolationProblem(const vector<Point> &poin
         lagranges.push_back(make_unique<Lagrange>(point));
     }
 
+    xform = Transform(points_in);
+
+    for (auto &lagrange: lagranges) {
+        xform.apply(lagrange->point);
+    }
+
     if (!lagranges.empty()) {
         add_errors_to_degree(0);
     }
@@ -49,17 +55,17 @@ void LinearInterpolationProblem::update_lagranges_for_new_lagrange(const Lagrang
 }
 
 void LinearInterpolationProblem::update_errors_for_lagrange(const Lagrange &new_lagrange) {
-    std::vector<Multi_index> indices_to_remove;
-    for (auto &error: errors) {
+    std::vector<Multi_index> terms_to_erase;
+    for (auto &error : errors) {
         double value = error.second->evaluate(new_lagrange.point);
         error.second->subtract_multiply(value, *(new_lagrange.polynomial_ptr));
         if (error.second->is_zero()) {
-            indices_to_remove.push_back(error.first);
+            terms_to_erase.push_back(error.first);
         }
     }
 
-    for (auto &index: indices_to_remove) {
-        errors.erase(index);
+    for (auto &term : terms_to_erase) {
+        errors.erase(term);
     }
 
 #ifndef NDEBUG

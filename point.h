@@ -26,7 +26,33 @@ public:
 
     [[nodiscard]] double get_value(int index) const;
 
+    void set_value(int index, double value_in) {
+        assert(index < dimension());
+        value[index] = value_in;
+    }
+
     [[nodiscard]] double power(const Multi_index &exponent) const;
+
+    Point &operator-=(const Point &rhs) {
+        assert(dimension() == rhs.dimension());
+
+        for (int index = 0; index < value.size(); index++) {
+            value[index] -= rhs.get_value(index);
+        }
+
+        return *this;
+    }
+
+    Point &operator+=(const Point &rhs) {
+        assert(dimension() == rhs.dimension());
+
+        for (int index = 0; index < value.size(); index++) {
+            value[index] += rhs.get_value(index);
+        }
+
+        return *this;
+    }
+
 };
 
 inline bool operator==(const Point &lhs, const Point &rhs) {
