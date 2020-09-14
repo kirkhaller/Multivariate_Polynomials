@@ -48,7 +48,7 @@ bool parse_polynomial_string(const string &string_in, coefficient_t *term_map_ou
 
     // Change any minuses between terms to +-
     working_string_vector = StrSplit(working_string, '-', absl::SkipEmpty());
-    working_string = StrJoin(working_string_vector, "+ -");
+    working_string = StrJoin(working_string_vector, "+-");
 
     //Break into terms: a coefficient, variable and exponent
     working_string_vector = StrSplit(working_string, '+', absl::SkipWhitespace()); //TODO: Write a better predicate
@@ -58,18 +58,23 @@ bool parse_polynomial_string(const string &string_in, coefficient_t *term_map_ou
 
     for (const auto &term: working_string_vector) {
         working_term_vector = StrSplit(term, "x^", SkipEmpty());
+
+        double coefficient;
         if (working_term_vector.size() > 2) {
             return false;
-        }
-
-        //Get the coefficient
-        double coefficient;
-        if (!SimpleAtod(working_term_vector[0], &coefficient)) {
-            return false;
+        } else if (working_term_vector.size() == 1) {
+            coefficient = 1.0;
+        } else { // size == 2
+            //Get the coefficient
+            if (working_term_vector[0] == "-") {
+                coefficient = -1;
+            } else if (!SimpleAtod(working_term_vector[0], &coefficient)) {
+                return false;
+            }
         }
 
         m_index_t working_exponent_vector;
-        if (!parse_multiindex_string(working_term_vector[1], &working_exponent_vector)) {
+        if (!parse_multiindex_string(*working_term_vector.rbegin(), &working_exponent_vector)) {
             return false;
         }
 
