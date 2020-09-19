@@ -3,7 +3,6 @@
 //
 
 #include <algorithm>
-#include <functional>
 #include "Multiindex.h"
 #include <numeric>
 #include "utilities/utilities.h"
@@ -94,7 +93,7 @@ Multi_index Multi_index::operator-(const Multi_index &rhs) const {
     return Multi_index(index_out);
 }
 
-Multi_index Multi_index::least_common_multiple(Multi_index &other) const {
+Multi_index Multi_index::least_common_multiple(const Multi_index &other) const {
     Multi_index multiindex_out(other);
     for (int index = 0; index < dimension(); index++) {
         multiindex_out.m_index[index] = std::max(other.get_value(index), get_value(index));
@@ -102,7 +101,7 @@ Multi_index Multi_index::least_common_multiple(Multi_index &other) const {
     return multiindex_out;
 }
 
-bool Multi_index::divides(Multi_index &other) const {
+bool Multi_index::divides(const Multi_index &other) const {
     for (int index = 0; index < dimension(); index++) {
         if (get_value(index) > other.get_value(index)) {
             return false;

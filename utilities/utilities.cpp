@@ -46,9 +46,14 @@ bool parse_polynomial_string(const string &string_in, coefficient_t *term_map_ou
     working_string_vector = StrSplit(string_in, ' ', absl::SkipEmpty());
     working_string = StrJoin(working_string_vector, "");
 
+    // Special case that the first term is negative
+    bool first_term_negative = (working_string[0] == '-');
     // Change any minuses between terms to +-
     working_string_vector = StrSplit(working_string, '-', absl::SkipEmpty());
     working_string = StrJoin(working_string_vector, "+-");
+    if (first_term_negative) {
+        working_string = "-" + working_string;
+    }
 
     //Break into terms: a coefficient, variable and exponent
     working_string_vector = StrSplit(working_string, '+', absl::SkipWhitespace()); //TODO: Write a better predicate

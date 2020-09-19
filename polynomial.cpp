@@ -31,7 +31,7 @@ double Polynomial::evaluate(const Point &point) const {
     return value_out.value();
 }
 
-Polynomial Polynomial::multiply_by_monomial(Multi_index &index, double coefficient) {
+Polynomial Polynomial::multiply_by_monomial(Multi_index &index, double coefficient) const {
     Polynomial poly_out;
     for (const auto &term : coefficients) {
         Multi_index shifted_multi_index = term.first + index;
@@ -181,44 +181,48 @@ void Polynomial::subtract_multiply(double scalar, const Polynomial &poly_in) {
 }
 
 void Polynomial::clear_zero_terms() {
-    for (auto term = coefficients.begin(), next_term = term; term != coefficients.end(); term = next_term) {
-        ++next_term;
-        if (fabs(term->second) < d_polynomial_coefficient_tol) {
-            coefficients.erase(term);
+    std::vector<Multi_index> to_be_erased;
+    for (auto &term : coefficients) {
+        if (fabs(term.second) < d_polynomial_coefficient_tol) {
+            to_be_erased.push_back(term.first);
         }
+    }
+
+    for (auto &exponent : to_be_erased) {
+        coefficients.erase(exponent);
     }
 }
 
-Polynomial::quotient_remainder Polynomial::divide(Polynomial &poly_in) const {
-    quotient_remainder return_data;
-    return_data.remainder = Polynomial(*this);
-    return_data.quotient = Polynomial();
+Polynomial Polynomial::divided_by(const Polynomial &poly_in, Polynomial *quotient) const {
+    Polynomial remainder = Polynomial(*this);
+    if (this->is_zero()) {
+        return remainder;
+    }
 
     monomial_term leading_term_in = poly_in.leading_term();
     Multi_index working_term = leading_term().exponent;
-    [[maybe_unused]] auto reverse_iterator = return_data.remainder.coefficients.find(leading_term().exponent);
-    while (leading_term_in.exponent < working_term) {
+    [[maybe_unused]] auto reverse_iterator = remainder.coefficients.find(working_term);
+    while (!(working_term < leading_term_in.exponent)) {
         try {
             Multi_index dividing_term = working_term - leading_term_in.exponent;
             double value = reverse_iterator->second / leading_term_in.coefficient;
-            return_data.quotient[dividing_term] = value;
+            if (quotient != nullptr) {
+                (*quotient)[dividing_term] = value;
+            }
             Polynomial working_poly = poly_in.multiply_by_monomial(dividing_term, value);
-            return_data.remainder -= working_poly;
-            return_data.remainder.describe();
+            remainder -= working_poly;
         }
-        catch (std::range_error &e) {
-
-        } // If the multi index subtraction is not valid, do nothing.
+        catch (std::range_error &e) {} // If the multi index subtraction is not valid, do nothing.
 
         // Need to find the term, since the subtraction above may invalidate the iterator
         // The Find operator returns an iterator, but can not compare to rend() so see if we are at the
         // beginning.
-        if (working_term == return_data.remainder.coefficients.begin()->first) {
-            return return_data;
+        if (working_term == remainder.coefficients.begin()->first) {
+            return remainder;
         }
-        reverse_iterator = --return_data.remainder.coefficients.find(working_term);
+        reverse_iterator = --remainder.coefficients.find(working_term);
         working_term = reverse_iterator->first;
     }
-    return return_data;
+    return remainder;
 }
 

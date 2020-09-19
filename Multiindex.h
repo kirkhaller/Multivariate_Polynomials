@@ -35,9 +35,9 @@ public:
 
     [[nodiscard]] int get_degree() const;
 
-    [[nodiscard]] Multi_index least_common_multiple(Multi_index &other) const;
+    [[nodiscard]] Multi_index least_common_multiple(const Multi_index &other) const;
 
-    [[nodiscard]] bool divides(Multi_index &other) const;
+    [[nodiscard]] bool divides(const Multi_index &other) const;
 
     Multi_index operator+(const Multi_index &rhs) const;
 

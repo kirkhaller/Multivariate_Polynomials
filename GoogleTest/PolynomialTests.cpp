@@ -5,7 +5,6 @@
 #include "gtest/gtest.h"
 #include "../point.h"
 #include "../polynomial.h"
-#include <vector>
 
 namespace {
     class PolynomialTest : public ::testing::Test {
@@ -192,25 +191,28 @@ namespace {
         Polynomial cubic("x^(3,0) + 3 x^(2,1) + 3 x^(1,2) + x^(0,3)");
         Polynomial linear("x^(1,0) + x^(0,1)");
 
-        Polynomial::quotient_remainder result = linear.divide(cubic);
-        EXPECT_TRUE(result.remainder == linear);
-        EXPECT_TRUE(result.quotient.is_zero());
+        Polynomial quotient1;
+        Polynomial remainder = linear.divided_by(cubic, &quotient1);
+        EXPECT_TRUE(remainder == linear);
+        EXPECT_TRUE(quotient1.is_zero());
 
         Polynomial quotient("x^(2,0) + 2.0 x^(1,1) + x^(0,2)");
-        result = cubic.divide(linear);
-        result.quotient.describe();
-        result.remainder.describe();
-        EXPECT_TRUE(result.remainder.is_zero());
-        EXPECT_TRUE(result.quotient == quotient);
+        Polynomial quotient2;
+        remainder = cubic.divided_by(linear, &quotient2);
+        quotient2.describe();
+        remainder.describe();
+        EXPECT_TRUE(remainder.is_zero());
+        EXPECT_TRUE(quotient2 == quotient);
 
-        Polynomial new_quotient("x^(2,0) - x^(1,1) + x^(0,2)");
         Polynomial new_cubic("x^(3,0) + x^(0,0)");
         Polynomial new_remainder("x^(0,0) - x^(0,3)");
-        result = new_cubic.divide(linear);
-        result.quotient.describe();
-        result.remainder.describe();
-        EXPECT_TRUE(result.remainder == new_remainder);
-        EXPECT_TRUE(result.quotient == new_quotient);
+        remainder = new_cubic.divided_by(linear);
+        remainder.describe();
+        EXPECT_TRUE(remainder == new_remainder);
+
+        remainder = new_cubic;
+        remainder = remainder.divided_by(linear);
+        EXPECT_TRUE(remainder == new_remainder);
     }
 
 }

@@ -87,9 +87,8 @@ public:
 
     absl::string_view describe();
 
-    struct quotient_remainder;
-
-    quotient_remainder divide(Polynomial &poly_in) const;
+    // returns the remainder, if quotient is wanted, it will be returned as argument.
+    Polynomial divided_by(const Polynomial &poly_in, Polynomial *quotient = nullptr) const;
 
     // operator assignments
     void add_multiply(double scalar, const Polynomial &poly_in);
@@ -179,21 +178,16 @@ public:
         if (!coefficients.empty() && coefficients.begin()->first.dimension() != exponent.dimension())
             throw std::invalid_argument("Exponent's dimensions mismatch rest of polynomial.");
         coefficients.insert_or_assign(exponent, coefficient);
-#ifndef NDEBUG
+
         //describe();
-#endif
+
         return coefficients[exponent];
     }
 
     [[nodiscard]] double get_coefficient(const Multi_index &exponent) const;
 
-private:
-    Polynomial multiply_by_monomial(Multi_index &index, double coefficient);
+    Polynomial multiply_by_monomial(Multi_index &index, double coefficient) const;
 };
 
-struct Polynomial::quotient_remainder {
-    Polynomial remainder;
-    Polynomial quotient;
-};
 
 #endif //MULTIVARIATE_POLYNOMIALS_POLYNOMIAL_H

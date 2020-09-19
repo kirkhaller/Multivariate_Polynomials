@@ -7,6 +7,7 @@
 
 #include "absl/container/btree_map.h"
 #include <cassert>
+#include "GroebnerBasis.h"
 #include "Lagrange.h"
 #include "LagrangeSelector.h"
 #include "point.h"
@@ -22,6 +23,8 @@ enum LagrangeSelector_e {
     x_bias, least, hm
 };
 
+#define error_map_t btree_map<Multi_index, unique_ptr<Polynomial>>
+
 /*
  * A linear interpolation problem in general takes a set of points with data, and a function space and returns a
  * unique element of the function space that matches the data at the points. Here, the function space is a subset
@@ -36,7 +39,7 @@ private:
 
     LagrangeSelector_e selector_type = x_bias;
     unique_ptr<LagrangeSelector> selector;
-    btree_map<Multi_index, unique_ptr<Polynomial>> errors;
+    error_map_t errors;
     int max_error_degree;
 
     // To address tolerance concerns, will keep data within [-1,1]^d cube.

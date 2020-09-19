@@ -18,13 +18,13 @@ add_library(Multivariate_Polynomials
         polynomial.cpp polynomial.h
         utilities/kbnsum.cpp utilities/kbnsum.h
         utilities/utilities.cpp utilities/utilities.h
-        Lagrange.cpp Lagrange.h GroebnerBasis.cpp GroebnerBasis.h transform.cpp transform.h)
+        Lagrange.h GroebnerBasis.cpp GroebnerBasis.h transform.cpp transform.h)
 
 # 'Google_Tests_run' is the target name
 add_executable(Google_Tests_run
         GoogleTest/PointTests.cpp
         GoogleTest/MultiindexTests.cpp
         GoogleTest/PolynomialTests.cpp
-        GoogleTest/LinearInterpolationProblemTests.cpp)
+        GoogleTest/LinearInterpolationProblemTests.cpp GoogleTest/GroebnerTest.cpp)
 
 target_link_libraries(Google_Tests_run gtest gtest_main Multivariate_Polynomials absl::strings)
