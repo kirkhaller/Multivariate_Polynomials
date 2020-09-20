@@ -6,6 +6,7 @@
 #define MULTIVARIATE_POLYNOMIALS_LAGRANGESELECTOR_H
 
 #include "absl/container/btree_map.h"
+#include "GroebnerBasis.h"
 #include "Lagrange.h"
 #include "Multiindex.h"
 #include "point.h"
@@ -56,7 +57,7 @@ public:
     unique_ptr<Polynomial> select_lagrange_for_point(Point &point_in) override;
 };
 
-// The HM (Haller Mann) selector, follow the least, but uses the grobner basis for the ideal I({points}).
+// The HM (Haller Mann) selector, follow the least, but uses the groebner basis for the ideal I({points}).
 class HMSelector : public LagrangeSelector {
 
 public:

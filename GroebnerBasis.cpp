@@ -7,6 +7,8 @@
 using namespace absl;
 using namespace std;
 
+bool turn_on_debugging = true;
+
 GroebnerBasis::GroebnerBasis(btree_map<Multi_index, unique_ptr<Polynomial>> &errors) {
     groebner_list = {};
 
@@ -17,13 +19,15 @@ GroebnerBasis::GroebnerBasis(btree_map<Multi_index, unique_ptr<Polynomial>> &err
 
     solve();
     reduce();
-
 }
 
 void GroebnerBasis::add_new_polynomial(const shared_ptr<Polynomial> &poly) {
     poly->clear_zero_terms();
     monomial_term leading_term = poly->leading_term();
     *poly *= 1.0 / leading_term.coefficient;
+    if (turn_on_debugging) {
+        poly->describe();
+    }
 
     for (auto &g : input_list) {
         Criteria criteria(poly, g);
@@ -41,6 +45,9 @@ Polynomial GroebnerBasis::divided_unreduced(const Polynomial &poly_in) const {
         remainder = remainder.divided_by(*g);
     }
 
+    if (turn_on_debugging) {
+        remainder.describe();
+    }
     return remainder;
 }
 
@@ -48,9 +55,12 @@ Polynomial GroebnerBasis::divided(const Polynomial &poly_in) const {
     Polynomial remainder(poly_in);
 
     for (auto g = groebner_list.rbegin(); g != groebner_list.rend(); g++) {
-        remainder = remainder.divided_by(*(g->second));
+        remainder = remainder.divided_by(*g->second);
     }
 
+    if (turn_on_debugging) {
+        remainder.describe();
+    }
     return remainder;
 }
 
@@ -68,7 +78,6 @@ void GroebnerBasis::solve() {
         }
     }
 }
-
 
 bool GroebnerBasis::check_criteria(const Criteria &criteria) const {
 
@@ -103,13 +112,20 @@ Polynomial GroebnerBasis::s_polynomial(const Criteria &criteria) {
 }
 
 void GroebnerBasis::reduce() {
-    sort(input_list.begin(), input_list.end());
+    sort(input_list.begin(), input_list.end(), polynomial_compare);
     for (auto &poly : input_list) {
         *poly = divided(*poly);
         if (!poly->is_zero()) {
             monomial_term lt = poly->leading_term();
+            poly->describe();
             assert(groebner_list.count(lt.exponent) == 0);
-            groebner_list[lt.exponent] = poly;
+            groebner_list[lt.exponent] = make_unique<Polynomial>(*poly);
         }
     }
+}
+
+bool GroebnerBasis::polynomial_compare(shared_ptr<Polynomial> &poly1, shared_ptr<Polynomial> &poly2) {
+    Multi_index index1 = poly1->leading_term().exponent;
+    Multi_index index2 = poly2->leading_term().exponent;
+    return index1 < index2;
 }

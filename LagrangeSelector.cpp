@@ -2,6 +2,7 @@
 // Created by Kirk Haller on 8/27/20.
 //
 
+#include <iostream>
 #include "LagrangeSelector.h"
 #define d_selector_tolerance 0.000000001
 
@@ -42,5 +43,16 @@ unique_ptr<Polynomial> LeastSelector::select_lagrange_for_point(Point &point_in)
 }
 
 unique_ptr<Polynomial> HMSelector::select_lagrange_for_point(Point &point_in) {
-    return LagrangeSelector::select_lagrange_for_point(point_in);
+    GroebnerBasis groebner(*candidates);
+
+    Polynomial polynomial_out;
+    double sum = 0;
+    for (auto &poly_set : groebner.groebner_list) {
+        //cout << "Groebner: " << poly_set.second->get_description() << "\n";
+        double value = poly_set.second->evaluate(point_in);
+        sum += value * value;
+        polynomial_out.add_multiply(value, *poly_set.second);
+    }
+    polynomial_out *= 1.0 / sum;
+    return make_unique<Polynomial>(polynomial_out);
 }

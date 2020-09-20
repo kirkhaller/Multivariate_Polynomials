@@ -51,9 +51,9 @@ inline bool operator==(const Criteria &lhs, const Criteria &rhs) {
 }
 
 // Computes a reduce groebner basis for ideal generate by the polynomials input. (see, e.g, Cox, Little and Shea)
-// This is not a general Groebner basis solver, but intended optimized for the case of interpolation.
+// This is not a general Groebner basis solver, but optimized for the case of interpolation.
 // I.e., the ideal of polynomials that vanish on a finite point set.
-#define groebner_list_t absl::btree_map<Multi_index, std::shared_ptr<Polynomial>>
+#define leading_term_polynomial_map_t absl::btree_map<Multi_index, unique_ptr<Polynomial>>
 
 class GroebnerBasis {
 private:
@@ -61,7 +61,7 @@ private:
     btree_set<Criteria> leading_term_check;
 
 public:
-    groebner_list_t groebner_list;
+    leading_term_polynomial_map_t groebner_list;
 
 public:
     explicit GroebnerBasis(btree_map<Multi_index, unique_ptr<Polynomial>> &errors);
@@ -81,10 +81,7 @@ private:
 
     void reduce();
 
+    static bool polynomial_compare(shared_ptr<Polynomial> &poly1, shared_ptr<Polynomial> &poly2);
 };
-
-inline bool operator<(const Polynomial &lhs, const Polynomial &rhs) {
-    return lhs.leading_term().exponent < rhs.leading_term().exponent;
-}
 
 #endif //MULTIVARIATE_POLYNOMIALS_GROEBNERBASIS_H
