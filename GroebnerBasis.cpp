@@ -29,8 +29,10 @@ void GroebnerBasis::add_new_polynomial(const shared_ptr<Polynomial> &poly) {
         poly->describe();
     }
 
-    for (auto &g : input_list) {
-        Criteria criteria(poly, g);
+    int list_size = input_list.size();
+    for (int count = 0; count < list_size; count++) {
+        monomial_term working_term = input_list[count]->leading_term();
+        Criteria criteria(count, working_term.exponent, list_size, leading_term.exponent);
         if (criteria.is_valid()) {
             leading_term_check.emplace(criteria);
         }
@@ -81,14 +83,18 @@ void GroebnerBasis::solve() {
 
 bool GroebnerBasis::check_criteria(const Criteria &criteria) const {
 
-    for (auto &g: input_list) {
-        if (g != criteria.first && g != criteria.second) {
-            Multi_index term = g->leading_term().exponent;
-            Criteria test_first(g, criteria.first);
-            Criteria test_second(g, criteria.second);
+    int first = criteria.first;
+    int second = criteria.second;
+    Multi_index first_index = input_list[criteria.first]->leading_term().exponent;
+    Multi_index second_index = input_list[criteria.second]->leading_term().exponent;
+    for (int count = 0; count < input_list.size(); count++) {
+        if (count != criteria.first && count != criteria.second) {
+            Multi_index term_loop = input_list[count]->leading_term().exponent;
+            Criteria test_first(count, term_loop, first, first_index);
+            Criteria test_second(count, term_loop, second, second_index);
             if (!leading_term_check.contains(test_first) &&
                 !leading_term_check.contains(test_second) &&
-                term.divides(criteria.lcm)) {
+                term_loop.divides(criteria.lcm)) {
                 return true;
             }
         }
@@ -98,8 +104,8 @@ bool GroebnerBasis::check_criteria(const Criteria &criteria) const {
 }
 
 Polynomial GroebnerBasis::s_polynomial(const Criteria &criteria) {
-    Polynomial first(*criteria.first);
-    Polynomial second(*criteria.second);
+    Polynomial first(*input_list[criteria.first]);
+    Polynomial second(*input_list[criteria.second]);
     monomial_term first_term = first.leading_term();
     monomial_term second_term = second.leading_term();
     Multi_index first_adjustment = criteria.lcm - first_term.exponent;

@@ -18,16 +18,14 @@ using namespace std;
 
 class Criteria {
 public:
-    shared_ptr<Polynomial> first, second;
+    int first, second;
     Multi_index lcm, sum;
 
-    Criteria(shared_ptr<Polynomial> one, shared_ptr<Polynomial> two) {
-        first = one;
-        Multi_index index_one = first->leading_term().exponent;
-        second = two;
-        Multi_index index_two = second->leading_term().exponent;
-        lcm = index_one.least_common_multiple(index_two);
-        sum = index_one + index_one;
+    Criteria(int a, Multi_index &index_a, int b, Multi_index &index_b) {
+        first = min(a, b);
+        second = max(a, b);
+        lcm = index_a.least_common_multiple(index_b);
+        sum = index_a + index_b;
     }
 
     [[nodiscard]] bool is_valid() const {
@@ -40,14 +38,14 @@ public:
 };
 
 inline bool operator<(const Criteria &lhs, const Criteria &rhs) {
-    if (*lhs.first == *rhs.first) {
+    if (lhs.first == rhs.first) {
         return lhs.second < rhs.second;
     }
     return lhs.first < rhs.first;
 }
 
 inline bool operator==(const Criteria &lhs, const Criteria &rhs) {
-    return ((*lhs.first == *rhs.first) && (*lhs.second == *rhs.second));
+    return ((lhs.first == rhs.first) && (lhs.second == rhs.second));
 }
 
 // Computes a reduce groebner basis for ideal generate by the polynomials input. (see, e.g, Cox, Little and Shea)
@@ -72,7 +70,7 @@ public:
 
     [[nodiscard]] Polynomial divided(const Polynomial &poly_in) const;
 
-    [[nodiscard]] static Polynomial s_polynomial(const Criteria &criteria);
+    [[nodiscard]] Polynomial s_polynomial(const Criteria &criteria);
 
 private:
     [[nodiscard]] Polynomial divided_unreduced(const Polynomial &poly_in) const;
