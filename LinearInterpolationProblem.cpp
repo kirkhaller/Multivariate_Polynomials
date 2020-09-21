@@ -3,6 +3,7 @@
 //
 
 #include <cassert>
+#include <cmath>
 #include <iostream>
 #include <memory>
 #include "LinearInterpolationProblem.h"
@@ -23,6 +24,12 @@ LinearInterpolationProblem::LinearInterpolationProblem(const vector<Point> &poin
         add_errors_to_degree(0);
     }
     set_selector_type(selector_type);
+
+    if (dimension() > 0) {
+        evaluation_grid.reserve(pow(samples_per_dim - 1, dimension()));
+        point_t point_template = {};
+        create_test_grid(&point_template);
+    }
 }
 
 LinearInterpolationProblem::~LinearInterpolationProblem() {
@@ -171,7 +178,6 @@ void LinearInterpolationProblem::solve() {
         cout << error.second->describe() << '\n';
     }
 #endif
-
 }
 
 bool LinearInterpolationProblem::valid_results() const {
@@ -202,10 +208,37 @@ bool LinearInterpolationProblem::valid_results() const {
         }
     }
 
+
 #ifndef NDEBUG
     cout << "Max Lagrange Error: " << max_lagrange_error << "; Max Error: " << max_error << '\n';
 #endif
     return return_value;
+}
+
+void LinearInterpolationProblem::create_test_grid(point_t *point_template) {
+    if (point_template->size() == dimension()) {
+        Point new_point(*point_template);
+        evaluation_grid.push_back(new_point);
+        return;
+    }
+    for (int index = 1; index < samples_per_dim; index++) {
+        double value = 2.0 * index / (samples_per_dim + 1) - 1.0;
+        point_template->push_back(value);
+        create_test_grid(point_template);
+        point_template->pop_back();
+    }
+}
+
+void LinearInterpolationProblem::evaluate_errors() {
+    evaluation_data.clear();
+    for (auto &error : errors) {
+        btree_map<Point *, double> evaluations = {};
+        for (auto &point : evaluation_grid) {
+            double value = error.second->evaluate(point);
+            evaluations[&point] = value;
+        }
+        evaluation_data[error.second.get()] = evaluations;
+    }
 }
 
 

@@ -7,7 +7,7 @@
 using namespace absl;
 using namespace std;
 
-bool turn_on_debugging = true;
+bool turn_on_debugging = false;
 
 GroebnerBasis::GroebnerBasis(btree_map<Multi_index, unique_ptr<Polynomial>> &errors) {
     groebner_list = {};

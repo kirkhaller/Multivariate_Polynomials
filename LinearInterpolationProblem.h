@@ -46,6 +46,7 @@ private:
     Transform xform;
 
     // A mechanism for caching evaluation data, and too investigate performance.
+    int samples_per_dim = 40;
     std::vector<Point> evaluation_grid;
 
     //These point to data owned above
@@ -64,6 +65,8 @@ public:
 
         return lagranges.begin()->get()->point.dimension();
     }
+
+    void create_test_grid(point_t *point_template);
 
     [[nodiscard]] int get_degree() const;
 
@@ -85,6 +88,8 @@ public:
 
     //Validation Methods
     [[nodiscard]] bool valid_results() const;
+
+    void evaluate_errors();
 
 };
 

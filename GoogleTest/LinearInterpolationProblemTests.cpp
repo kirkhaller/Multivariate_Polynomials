@@ -10,8 +10,8 @@
 
 namespace {
     class LinearInterpolationProblemTest : public ::testing::Test {
-        int max_rows = 4;
-        int max_columns = 4;
+        int max_rows = 5;
+        int max_columns = 5;
 
         void SetUp() override {
             points.reserve(max_rows * max_columns);
@@ -143,20 +143,29 @@ TEST_F(LinearInterpolationProblemTest, TestTensorProduct) {
     EXPECT_TRUE(test_lip_y.valid_results());
 }
 
-TEST_F(LinearInterpolationProblemTest, TestFullGrid) {
+TEST_F(LinearInterpolationProblemTest, TestFullGridXBias) {
     LinearInterpolationProblem test_lip(points);
 
     EXPECT_NO_FATAL_FAILURE(test_lip.set_selector_type(x_bias));
     EXPECT_NO_FATAL_FAILURE(test_lip.solve());
     EXPECT_TRUE(test_lip.valid_results());
+    test_lip.evaluate_errors();
+}
 
-    EXPECT_NO_FATAL_FAILURE(test_lip.reset());
+TEST_F(LinearInterpolationProblemTest, TestFullGridLeast) {
+    LinearInterpolationProblem test_lip(points);
+
     EXPECT_NO_FATAL_FAILURE(test_lip.set_selector_type(least));
     EXPECT_NO_FATAL_FAILURE(test_lip.solve());
     EXPECT_TRUE(test_lip.valid_results());
+    test_lip.evaluate_errors();
+}
 
-    EXPECT_NO_FATAL_FAILURE(test_lip.reset());
+TEST_F(LinearInterpolationProblemTest, TestFullGridHM) {
+    LinearInterpolationProblem test_lip(points);
+
     EXPECT_NO_FATAL_FAILURE(test_lip.set_selector_type(hm));
     EXPECT_NO_FATAL_FAILURE(test_lip.solve());
     EXPECT_TRUE(test_lip.valid_results());
+    test_lip.evaluate_errors();
 }
