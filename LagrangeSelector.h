@@ -29,11 +29,10 @@ public:
     explicit LagrangeSelector(leading_term_polynomial_map_t *candidates_in) : candidates(candidates_in) {}
 
     // Calling function owns the polynomial.
-    virtual unique_ptr<Polynomial> select_lagrange_for_point(Point &point_in) {
+    virtual unique_ptr<Polynomial> select_lagrange_for_point(Point &point_in, bool reuse) {
         assert(true); // Getting here is an error.
         return make_unique<Polynomial>();
     }
-
 };
 
 // XBias Selector uses an existing monomial ordering to select the first (lowest) non-zero monomial as constructor
@@ -43,7 +42,7 @@ class XBiasSelector : public LagrangeSelector {
 public:
     explicit XBiasSelector(leading_term_polynomial_map_t *candidates_in) : LagrangeSelector(candidates_in) {}
 
-    unique_ptr<Polynomial> select_lagrange_for_point(Point &point_in) override;
+    unique_ptr<Polynomial> select_lagrange_for_point(Point &point_in, bool reuse) override;
 };
 
 // Least Selector using de Boor and Ron's Least Polynomial construction to select the Lagrange.
@@ -54,16 +53,18 @@ class LeastSelector : public LagrangeSelector {
 public:
     explicit LeastSelector(leading_term_polynomial_map_t *candidates_in) : LagrangeSelector(candidates_in) {}
 
-    unique_ptr<Polynomial> select_lagrange_for_point(Point &point_in) override;
+    unique_ptr<Polynomial> select_lagrange_for_point(Point &point_in, bool reuse) override;
 };
 
 // The HM (Haller Mann) selector, follow the least, but uses the groebner basis for the ideal I({points}).
 class HMSelector : public LagrangeSelector {
+    unique_ptr<GroebnerBasis> groebner;
 
 public:
-    explicit HMSelector(leading_term_polynomial_map_t *candidates_in) : LagrangeSelector(candidates_in) {}
+    explicit HMSelector(leading_term_polynomial_map_t *candidates_in) :
+            LagrangeSelector(candidates_in), groebner(nullptr) {}
 
-    unique_ptr<Polynomial> select_lagrange_for_point(Point &point_in) override;
+    unique_ptr<Polynomial> select_lagrange_for_point(Point &point_in, bool reuse = false) override;
 };
 
 #endif //MULTIVARIATE_POLYNOMIALS_LAGRANGESELECTOR_H

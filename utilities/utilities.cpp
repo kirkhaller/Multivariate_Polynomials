@@ -90,6 +90,20 @@ bool parse_polynomial_string(const string &string_in, coefficient_t *term_map_ou
     return true;
 }
 
+void create_point_grid(int dim, int samples_per_dim, point_t &point_template, std::vector<Point> *grid) {
+    if (point_template.size() == dim) {
+        Point new_point(point_template);
+        grid->push_back(new_point);
+        return;
+    }
+    for (int index = 1; index < samples_per_dim; index++) {
+        double value = 2.0 * index / (samples_per_dim + 1) - 1.0;
+        point_template.push_back(value);
+        create_point_grid(dim, samples_per_dim, point_template, grid);
+        point_template.pop_back();
+    }
+
+}
 
 
 

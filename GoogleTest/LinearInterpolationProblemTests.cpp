@@ -6,7 +6,6 @@
 #include "gtest/gtest.h"
 #include "../point.h"
 #include "../LinearInterpolationProblem.h"
-#include <vector>
 
 namespace {
     class LinearInterpolationProblemTest : public ::testing::Test {
@@ -14,7 +13,7 @@ namespace {
         int max_columns = 5;
 
         void SetUp() override {
-            points.reserve(max_rows * max_columns);
+            points.reserve((max_rows + 1) * (max_columns + 1));
             for (int rows = 0; rows <= max_rows; rows++) {
                 for (int columns = 0; columns <= max_columns; columns++) {
                     point_t point_vec = {2.0 * double(rows) / max_rows - 1.0,
@@ -22,6 +21,15 @@ namespace {
                     points.emplace_back(point_vec);
                 }
             }
+            extra_points.reserve(max_rows * max_columns);
+            for (int rows = 0; rows < max_rows; rows++) {
+                for (int columns = 0; columns < max_columns; columns++) {
+                    point_t point_vec = {(2.0 * double(rows) + 0.5) / max_rows - 1.0,
+                                         (2.0 * double(columns) + 0.5) / max_columns - 1.0};
+                    extra_points.emplace_back(point_vec);
+                }
+            }
+
         }
 
         void TearDown() override {
@@ -34,6 +42,7 @@ namespace {
         }
 
         vector<Point> points;
+        vector<Point> extra_points;
     };
 }
 
@@ -43,7 +52,7 @@ TEST_F(LinearInterpolationProblemTest, TestEdgeCases) {
     EXPECT_NO_FATAL_FAILURE(test_lip.solve());
     EXPECT_EQ(test_lip.get_degree(), 0);
     EXPECT_EQ(test_lip.dimension(), -1);
-    EXPECT_TRUE(test_lip.valid_results());
+    EXPECT_TRUE(test_lip.validate_results());
 }
 
 TEST_F(LinearInterpolationProblemTest, TestOnePoint) {
@@ -55,19 +64,19 @@ TEST_F(LinearInterpolationProblemTest, TestOnePoint) {
     EXPECT_NO_FATAL_FAILURE(test_lip.set_selector_type(x_bias));
     EXPECT_EQ(test_lip.get_degree(), 0);
     EXPECT_EQ(test_lip.dimension(), 2);
-    EXPECT_TRUE(test_lip.valid_results());
+    EXPECT_TRUE(test_lip.validate_results());
 
     EXPECT_NO_FATAL_FAILURE(test_lip.reset());
     EXPECT_NO_FATAL_FAILURE(test_lip.set_selector_type(least));
     EXPECT_NO_FATAL_FAILURE(test_lip.solve());
     EXPECT_EQ(test_lip.get_degree(), 0);
-    EXPECT_TRUE(test_lip.valid_results());
+    EXPECT_TRUE(test_lip.validate_results());
 
     EXPECT_NO_FATAL_FAILURE(test_lip.reset());
     EXPECT_NO_FATAL_FAILURE(test_lip.set_selector_type(hm));
     EXPECT_NO_FATAL_FAILURE(test_lip.solve());
     EXPECT_EQ(test_lip.get_degree(), 0);
-    EXPECT_TRUE(test_lip.valid_results());
+    EXPECT_TRUE(test_lip.validate_results());
 }
 
 TEST_F(LinearInterpolationProblemTest, TestTwoPoints) {
@@ -79,19 +88,19 @@ TEST_F(LinearInterpolationProblemTest, TestTwoPoints) {
     EXPECT_NO_FATAL_FAILURE(test_lip.set_selector_type(x_bias));
     EXPECT_NO_FATAL_FAILURE(test_lip.solve());
     EXPECT_EQ(test_lip.get_degree(), 1);
-    EXPECT_TRUE(test_lip.valid_results());
+    EXPECT_TRUE(test_lip.validate_results());
 
     EXPECT_NO_FATAL_FAILURE(test_lip.reset());
     EXPECT_NO_FATAL_FAILURE(test_lip.set_selector_type(least));
     EXPECT_NO_FATAL_FAILURE(test_lip.solve());
     EXPECT_EQ(test_lip.get_degree(), 1);
-    EXPECT_TRUE(test_lip.valid_results());
+    EXPECT_TRUE(test_lip.validate_results());
 
     EXPECT_NO_FATAL_FAILURE(test_lip.reset());
     EXPECT_NO_FATAL_FAILURE(test_lip.set_selector_type(hm));
     EXPECT_NO_FATAL_FAILURE(test_lip.solve());
     EXPECT_EQ(test_lip.get_degree(), 1);
-    EXPECT_TRUE(test_lip.valid_results());
+    EXPECT_TRUE(test_lip.validate_results());
 }
 
 TEST_F(LinearInterpolationProblemTest, TestTensorProduct) {
@@ -104,19 +113,19 @@ TEST_F(LinearInterpolationProblemTest, TestTensorProduct) {
     EXPECT_NO_FATAL_FAILURE(test_lip.set_selector_type(x_bias));
     EXPECT_NO_FATAL_FAILURE(test_lip.solve());
     EXPECT_EQ(test_lip.get_degree(), 2);
-    EXPECT_TRUE(test_lip.valid_results());
+    EXPECT_TRUE(test_lip.validate_results());
 
     EXPECT_NO_FATAL_FAILURE(test_lip.reset());
     EXPECT_NO_FATAL_FAILURE(test_lip.set_selector_type(least));
     EXPECT_NO_FATAL_FAILURE(test_lip.solve());
     EXPECT_EQ(test_lip.get_degree(), 2);
-    EXPECT_TRUE(test_lip.valid_results());
+    EXPECT_TRUE(test_lip.validate_results());
 
     EXPECT_NO_FATAL_FAILURE(test_lip.reset());
     EXPECT_NO_FATAL_FAILURE(test_lip.set_selector_type(hm));
     EXPECT_NO_FATAL_FAILURE(test_lip.solve());
     EXPECT_EQ(test_lip.get_degree(), 2);
-    EXPECT_TRUE(test_lip.valid_results());
+    EXPECT_TRUE(test_lip.validate_results());
 
     vector<Point> y_points;
     y_points.push_back(*Point_Lookup(0, 0));
@@ -127,20 +136,20 @@ TEST_F(LinearInterpolationProblemTest, TestTensorProduct) {
     EXPECT_NO_FATAL_FAILURE(test_lip.set_selector_type(x_bias));
     EXPECT_NO_FATAL_FAILURE(test_lip_y.solve());
     EXPECT_EQ(test_lip_y.get_degree(), 2);
-    EXPECT_TRUE(test_lip_y.valid_results());
+    EXPECT_TRUE(test_lip_y.validate_results());
 
     EXPECT_NO_FATAL_FAILURE(test_lip_y.reset());
     EXPECT_NO_FATAL_FAILURE(test_lip_y.set_selector_type(least));
     EXPECT_NO_FATAL_FAILURE(test_lip_y.solve());
     EXPECT_EQ(test_lip_y.get_degree(), 2);
-    EXPECT_TRUE(test_lip_y.valid_results());
+    EXPECT_TRUE(test_lip_y.validate_results());
 
 
     EXPECT_NO_FATAL_FAILURE(test_lip_y.reset());
     EXPECT_NO_FATAL_FAILURE(test_lip_y.set_selector_type(hm));
     EXPECT_NO_FATAL_FAILURE(test_lip_y.solve());
     EXPECT_EQ(test_lip_y.get_degree(), 2);
-    EXPECT_TRUE(test_lip_y.valid_results());
+    EXPECT_TRUE(test_lip_y.validate_results());
 }
 
 TEST_F(LinearInterpolationProblemTest, TestFullGridXBias) {
@@ -148,8 +157,7 @@ TEST_F(LinearInterpolationProblemTest, TestFullGridXBias) {
 
     EXPECT_NO_FATAL_FAILURE(test_lip.set_selector_type(x_bias));
     EXPECT_NO_FATAL_FAILURE(test_lip.solve());
-    EXPECT_TRUE(test_lip.valid_results());
-    test_lip.evaluate_errors();
+    EXPECT_TRUE(test_lip.validate_results());
 }
 
 TEST_F(LinearInterpolationProblemTest, TestFullGridLeast) {
@@ -157,8 +165,7 @@ TEST_F(LinearInterpolationProblemTest, TestFullGridLeast) {
 
     EXPECT_NO_FATAL_FAILURE(test_lip.set_selector_type(least));
     EXPECT_NO_FATAL_FAILURE(test_lip.solve());
-    EXPECT_TRUE(test_lip.valid_results());
-    test_lip.evaluate_errors();
+    EXPECT_TRUE(test_lip.validate_results());
 }
 
 TEST_F(LinearInterpolationProblemTest, TestFullGridHM) {
@@ -166,6 +173,46 @@ TEST_F(LinearInterpolationProblemTest, TestFullGridHM) {
 
     EXPECT_NO_FATAL_FAILURE(test_lip.set_selector_type(hm));
     EXPECT_NO_FATAL_FAILURE(test_lip.solve());
-    EXPECT_TRUE(test_lip.valid_results());
-    test_lip.evaluate_errors();
+    EXPECT_TRUE(test_lip.validate_results());
+}
+
+TEST_F(LinearInterpolationProblemTest, TestAddPointXBias) {
+    LinearInterpolationProblem test_lip(points);
+
+    EXPECT_NO_FATAL_FAILURE(test_lip.set_selector_type(x_bias));
+    EXPECT_NO_FATAL_FAILURE(test_lip.solve());
+    EXPECT_TRUE(test_lip.validate_results());
+
+    EXPECT_FALSE(test_lip.add_point(*points.begin()));
+    EXPECT_TRUE(test_lip.add_point(*extra_points.begin()));
+}
+
+
+TEST_F(LinearInterpolationProblemTest, TestAddPointUndoXBias) {
+    LinearInterpolationProblem test_lip(points);
+
+    EXPECT_NO_FATAL_FAILURE(test_lip.set_selector_type(x_bias));
+    EXPECT_NO_FATAL_FAILURE(test_lip.solve());
+    EXPECT_TRUE(test_lip.validate_results());
+
+    for (auto &point : extra_points) {
+        EXPECT_TRUE(test_lip.add_point(point, true));
+        EXPECT_TRUE(test_lip.validate_results());
+        EXPECT_TRUE(test_lip.undo());
+    }
+}
+
+
+TEST_F(LinearInterpolationProblemTest, TestAddPointUndoHM) {
+    LinearInterpolationProblem test_lip(points);
+
+    EXPECT_NO_FATAL_FAILURE(test_lip.set_selector_type(hm));
+    EXPECT_NO_FATAL_FAILURE(test_lip.solve());
+    EXPECT_TRUE(test_lip.validate_results());
+
+    for (auto &point : extra_points) {
+        EXPECT_TRUE(test_lip.add_point(point, true));
+        EXPECT_TRUE(test_lip.validate_results());
+        EXPECT_TRUE(test_lip.undo());
+    }
 }

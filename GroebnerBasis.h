@@ -8,7 +8,6 @@
 #include "absl/container/btree_map.h"
 #include "absl/container/btree_set.h"
 #include "polynomial.h"
-#include "LagrangeSelector.h"
 #include <vector>
 
 

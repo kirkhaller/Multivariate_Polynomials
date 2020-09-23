@@ -45,20 +45,22 @@ private:
     // To address tolerance concerns, will keep data within [-1,1]^d cube.
     Transform xform;
 
-    // A mechanism for caching evaluation data, and too investigate performance.
-    int samples_per_dim = 40;
-    std::vector<Point> evaluation_grid;
-
-    //These point to data owned above
-    btree_map<Polynomial *, btree_map<Point *, double>> evaluation_data;
+    // Data for backup
+    vector<unique_ptr<Lagrange>> backup_lagranges;
+    error_map_t backup_errors; // These could be reconstructed if need be.
 
 
 public:
+    // Will set up the interpolation problem, assumptions:
+    //  - the points are unique (not checked, may fail).
+    //  - the points are of the same dimension (not check, will fail).
+    // default solve mode is x-bias.
     explicit LinearInterpolationProblem(const vector<Point> &points_in);
 
     ~LinearInterpolationProblem();
 
     // inquiry functions
+    //
     [[nodiscard]] int dimension() const {
         if (lagranges.empty())
             return -1;
@@ -66,13 +68,28 @@ public:
         return lagranges.begin()->get()->point.dimension();
     }
 
-    void create_test_grid(point_t *point_template);
-
+    // returns that highest degree of the lagrange polynomials.
     [[nodiscard]] int get_degree() const;
 
     void set_selector_type(LagrangeSelector_e type_in);
 
-    // Lagrange Construction Methods
+    // These are the main routines
+    void reset();
+
+    void solve();
+
+    // returns false if the point is not added.
+    // If with_undo is true, the operation can be undone
+    bool add_point(const Point &new_point, bool with_undo = false);
+
+    // Returns if the undo was successful.
+    bool undo();
+
+    //Validation Methods
+    [[nodiscard]] bool validate_results() const;
+
+private:
+    // Internal construction mechanism.
 
     void update_lagranges_for_new_lagrange(const Lagrange &new_lagrange);
 
@@ -81,15 +98,7 @@ public:
 
     void update_errors_for_lagrange(const Lagrange &new_lagrange);
 
-    // These are the main routines
-    void reset();
-
-    void solve();
-
-    //Validation Methods
-    [[nodiscard]] bool valid_results() const;
-
-    void evaluate_errors();
+    void backup_data_for_undo();
 
 };
 

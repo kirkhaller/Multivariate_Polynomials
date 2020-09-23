@@ -10,6 +10,11 @@
 
 LinearInterpolationProblem::LinearInterpolationProblem(const vector<Point> &points_in) : max_error_degree(-1) {
 
+    // Initialize backup data
+    backup_errors = {};
+
+    //setup lagrange data, capturing points.
+    //will also translate and scale into cube [-1.1]^d
     for (const auto &point: points_in) {
         lagranges.push_back(make_unique<Lagrange>(point));
     }
@@ -20,16 +25,13 @@ LinearInterpolationProblem::LinearInterpolationProblem(const vector<Point> &poin
         xform.apply(lagrange->point);
     }
 
+    // add the errors
     if (!lagranges.empty()) {
         add_errors_to_degree(0);
     }
-    set_selector_type(selector_type);
 
-    if (dimension() > 0) {
-        evaluation_grid.reserve(pow(samples_per_dim - 1, dimension()));
-        point_t point_template = {};
-        create_test_grid(&point_template);
-    }
+    // setup the selectors.
+    set_selector_type(selector_type);
 }
 
 LinearInterpolationProblem::~LinearInterpolationProblem() {
@@ -137,31 +139,25 @@ void LinearInterpolationProblem::reset() {
     }
 
     errors.clear();
-    evaluation_data.clear();
     max_error_degree = -1;
     add_errors_to_degree(0);
 }
 
 void LinearInterpolationProblem::solve() {
 
-#ifndef NDEBUG
-    int count = 0;
-#endif
-
     for (auto &lagrange : lagranges) {
-        lagrange->polynomial_ptr = selector->select_lagrange_for_point(lagrange->point);
-        assert(lagrange->is_set());
-
+        if (!lagrange->is_set()) {
+            lagrange->polynomial_ptr = selector->select_lagrange_for_point(lagrange->point, false);
+            assert(lagrange->is_set());
 #ifndef NDEBUG
-        cout << "For Count: " << count++;
-        cout << "  Point: " << lagrange->point.description();
-        cout << "  New Lagrange: " << lagrange->get_polynomial()->describe() << '\n';
+            cout << "  Point: " << lagrange->point.description();
+            cout << "  New Lagrange: " << lagrange->get_polynomial()->describe() << '\n';
 #endif
-
-        update_lagranges_for_new_lagrange(*lagrange);
-        update_errors_for_lagrange(*lagrange);
-        if (errors.empty() || errors.rbegin()->first.get_degree() < lagrange->get_degree() + 1) {
-            add_errors_to_degree(lagrange->get_degree() + 1);
+            update_lagranges_for_new_lagrange(*lagrange);
+            update_errors_for_lagrange(*lagrange);
+            if (errors.empty() || errors.rbegin()->first.get_degree() < lagrange->get_degree() + 1) {
+                add_errors_to_degree(lagrange->get_degree() + 1);
+            }
         }
     }
 
@@ -180,7 +176,37 @@ void LinearInterpolationProblem::solve() {
 #endif
 }
 
-bool LinearInterpolationProblem::valid_results() const {
+
+bool LinearInterpolationProblem::add_point(const Point &new_point, bool with_undo) {
+    bool is_unique_point = true;
+    Point xformed_point(new_point);
+    xform.apply(xformed_point);
+
+    for (auto &lagrange : lagranges) {
+        if (xformed_point == lagrange->point) {
+            is_unique_point = false;
+        }
+    }
+    if (is_unique_point) {
+        if (with_undo) {
+            backup_data_for_undo();
+        }
+        lagranges.push_back(make_unique<Lagrange>(xformed_point));
+        auto lagrange = lagranges.rbegin()->get();
+        lagrange->polynomial_ptr = selector->select_lagrange_for_point(lagrange->point, with_undo);
+        assert(lagrange->is_set());
+
+        update_lagranges_for_new_lagrange(*lagrange);
+        update_errors_for_lagrange(*lagrange);
+        if (errors.empty() || errors.rbegin()->first.get_degree() < lagrange->get_degree() + 1) {
+            add_errors_to_degree(lagrange->get_degree() + 1);
+        }
+    }
+
+    return is_unique_point;
+}
+
+bool LinearInterpolationProblem::validate_results() const {
     double scaled_tolerance = lagranges.size() * d_polynomial_value_tol;
     double max_error = 0;
     double max_lagrange_error = 0;
@@ -210,35 +236,40 @@ bool LinearInterpolationProblem::valid_results() const {
 
 
 #ifndef NDEBUG
-    cout << "Max Lagrange Error: " << max_lagrange_error << "; Max Error: " << max_error << '\n';
+    cout << "Count:" << lagranges.size() << " Max Lagrange Error: " << max_lagrange_error << "; Max Error: "
+         << max_error << '\n';
 #endif
     return return_value;
 }
 
-void LinearInterpolationProblem::create_test_grid(point_t *point_template) {
-    if (point_template->size() == dimension()) {
-        Point new_point(*point_template);
-        evaluation_grid.push_back(new_point);
-        return;
+void LinearInterpolationProblem::backup_data_for_undo() {
+    backup_lagranges.clear();
+    for (auto &lagrange : lagranges) {
+        backup_lagranges.push_back(make_unique<Lagrange>(lagrange->point));
+        Lagrange *backup_lagrange = backup_lagranges.rbegin()->get();
+        if (lagrange->is_set()) {
+            // Want to make sure we are doing a copy and not a move.
+            Polynomial backup_poly(*lagrange->get_polynomial());
+            backup_lagrange->set_polynomial(&backup_poly);
+        }
     }
-    for (int index = 1; index < samples_per_dim; index++) {
-        double value = 2.0 * index / (samples_per_dim + 1) - 1.0;
-        point_template->push_back(value);
-        create_test_grid(point_template);
-        point_template->pop_back();
+
+    backup_errors.clear();
+    for (auto &error : errors) {
+        Polynomial error_poly(*error.second);
+        backup_errors[error.first] = make_unique<Polynomial>(error_poly);
     }
 }
 
-void LinearInterpolationProblem::evaluate_errors() {
-    evaluation_data.clear();
-    for (auto &error : errors) {
-        btree_map<Point *, double> evaluations = {};
-        for (auto &point : evaluation_grid) {
-            double value = error.second->evaluate(point);
-            evaluations[&point] = value;
-        }
-        evaluation_data[error.second.get()] = evaluations;
+bool LinearInterpolationProblem::undo() {
+    if (backup_lagranges.empty() || backup_errors.empty()) {
+        return false;
     }
+    lagranges = std::move(backup_lagranges);
+    backup_lagranges.clear();
+    errors = std::move(backup_errors);
+    backup_errors.clear();
+    return true;
 }
 
 
