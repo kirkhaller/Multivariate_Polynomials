@@ -64,7 +64,7 @@ public:
     explicit HMSelector(leading_term_polynomial_map_t *candidates_in) :
             LagrangeSelector(candidates_in), groebner(nullptr) {}
 
-    unique_ptr<Polynomial> select_lagrange_for_point(Point &point_in, bool reuse = false) override;
+    unique_ptr<Polynomial> select_lagrange_for_point(Point &point_in, bool reuse) override;
 };
 
 #endif //MULTIVARIATE_POLYNOMIALS_LAGRANGESELECTOR_H

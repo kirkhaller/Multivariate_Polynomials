@@ -16,7 +16,7 @@ unique_ptr<Polynomial> XBiasSelector::select_lagrange_for_point(Point &point_in,
             return make_unique<Polynomial>(polynomial_out);
         }
     }
-    return LagrangeSelector::select_lagrange_for_point(point_in);
+    return LagrangeSelector::select_lagrange_for_point(point_in, reuse);
 }
 
 unique_ptr<Polynomial> LeastSelector::select_lagrange_for_point(Point &point_in, bool reuse) {
@@ -39,7 +39,7 @@ unique_ptr<Polynomial> LeastSelector::select_lagrange_for_point(Point &point_in,
         }
     }
 
-    return LagrangeSelector::select_lagrange_for_point(point_in);
+    return LagrangeSelector::select_lagrange_for_point(point_in, reuse);
 }
 
 unique_ptr<Polynomial> HMSelector::select_lagrange_for_point(Point &point_in, bool reuse) {
