@@ -9,7 +9,7 @@
 #include "GroebnerBasis.h"
 #include "Lagrange.h"
 #include "Multiindex.h"
-#include "point.h"
+#include "../Geometry/point.h"
 #include "polynomial.h"
 
 // LagrangeSelector would be a protocol in a smalltalk type language (java, objective-c, swift),

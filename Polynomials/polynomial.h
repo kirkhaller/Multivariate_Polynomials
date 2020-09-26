@@ -8,9 +8,9 @@
 #include <string>
 #include "absl/container/btree_map.h"
 #include "absl/strings/string_view.h"
-#include "utilities/kbnsum.h"
+#include "../utilities/kbnsum.h"
 #include "Multiindex.h"
-#include "point.h"
+#include "../Geometry/point.h"
 
 
 #define d_polynomial_coefficient_tol 0.0000001

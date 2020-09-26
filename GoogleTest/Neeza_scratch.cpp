@@ -5,11 +5,11 @@
 
 #include "gtest/gtest.h"
 #include <algorithm>
-#include "../Multiindex.h"
-#include "../polynomial.h"
+#include "../Polynomials/Multiindex.h"
+#include "../Polynomials/polynomial.h"
 #include "../utilities/utilities.h"
 
-std::vector<int> buildIndex (std::string s);
+std::vector<int> buildIndex(std::string s);
 
 namespace {
 

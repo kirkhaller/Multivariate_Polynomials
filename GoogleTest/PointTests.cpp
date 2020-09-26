@@ -3,8 +3,8 @@
 //
 
 #include "gtest/gtest.h"
-#include "../point.h"
-#include "../transform.h"
+#include "../Geometry/point.h"
+#include "../Geometry/transform.h"
 
 namespace {
 

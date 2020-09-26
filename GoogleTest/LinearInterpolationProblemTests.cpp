@@ -4,8 +4,8 @@
 
 
 #include "gtest/gtest.h"
-#include "../point.h"
-#include "../LinearInterpolationProblem.h"
+#include "../Geometry/point.h"
+#include "../Polynomials/LinearInterpolationProblem.h"
 
 namespace {
     class LinearInterpolationProblemTest : public ::testing::Test {

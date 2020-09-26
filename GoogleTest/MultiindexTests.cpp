@@ -4,7 +4,7 @@
 
 #include "gtest/gtest.h"
 #include <numeric>
-#include "../Multiindex.h"
+#include "../Polynomials/Multiindex.h"
 
 namespace {
 

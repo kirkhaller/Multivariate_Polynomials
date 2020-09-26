@@ -5,7 +5,7 @@
 #ifndef MULTIVARIATE_POLYNOMIALS_LAGRANGE_H
 #define MULTIVARIATE_POLYNOMIALS_LAGRANGE_H
 
-#include "point.h"
+#include "../Geometry/point.h"
 #include "polynomial.h"
 
 #define d_polynomial_value_tol 0.000000001

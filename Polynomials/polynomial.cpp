@@ -4,7 +4,7 @@
 
 #include "absl/strings/string_view.h"
 #include "polynomial.h"
-#include "utilities/utilities.h"
+#include "../utilities/utilities.h"
 
 Polynomial::Polynomial(const std::string &string_in) {
     if (!parse_polynomial_string(string_in, &coefficients)) {
@@ -181,16 +181,10 @@ void Polynomial::subtract_multiply(double scalar, const Polynomial &poly_in) {
 }
 
 void Polynomial::clear_zero_terms() {
-    std::vector<Multi_index> to_be_erased;
-    for (auto &term : coefficients) {
-        if (fabs(term.second) < d_polynomial_coefficient_tol) {
-            to_be_erased.push_back(term.first);
-        }
-    }
-
-    for (auto &exponent : to_be_erased) {
-        coefficients.erase(exponent);
-    }
+    erase_if(coefficients, [](const auto &item) {
+        auto const&[coefficient, value] = item;
+        return fabs(value) < d_polynomial_coefficient_tol;
+    });
 }
 
 Polynomial Polynomial::divided_by(const Polynomial &poly_in, Polynomial *quotient) const {

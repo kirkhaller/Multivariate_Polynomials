@@ -10,9 +10,9 @@
 #include "GroebnerBasis.h"
 #include "Lagrange.h"
 #include "LagrangeSelector.h"
-#include "point.h"
+#include "../Geometry/point.h"
 #include "polynomial.h"
-#include "transform.h"
+#include "../Geometry/transform.h"
 #include <utility>
 #include <vector>
 

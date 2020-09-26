@@ -5,7 +5,7 @@
 #include <algorithm>
 #include "Multiindex.h"
 #include <numeric>
-#include "utilities/utilities.h"
+#include "../utilities/utilities.h"
 
 
 Multi_index::Multi_index(std::string &str) {

@@ -3,8 +3,8 @@
 //
 
 #include "gtest/gtest.h"
-#include "../point.h"
-#include "../polynomial.h"
+#include "../Geometry/point.h"
+#include "../Polynomials/polynomial.h"
 
 namespace {
     class PolynomialTest : public ::testing::Test {

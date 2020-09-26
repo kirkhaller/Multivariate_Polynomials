@@ -3,7 +3,7 @@
 //
 
 #include "gtest/gtest.h"
-#include "../GroebnerBasis.h"
+#include "../Polynomials/GroebnerBasis.h"
 
 TEST(groebner_test, empty_set) {
     absl::btree_map<Multi_index, std::unique_ptr<Polynomial>> list_in = {};

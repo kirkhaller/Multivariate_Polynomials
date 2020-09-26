@@ -5,7 +5,7 @@
 #define MULTIVARIATE_POLYNOMIALS_POINT_H
 
 #include <cmath>
-#include "Multiindex.h"
+#include "../Polynomials/Multiindex.h"
 #include <string>
 #include <vector>
 
