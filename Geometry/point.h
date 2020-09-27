@@ -33,6 +33,8 @@ public:
 
     [[nodiscard]] double power(const Multi_index &exponent) const;
 
+    double vector_length() const;
+
     Point &operator-=(const Point &rhs) {
         assert(dimension() == rhs.dimension());
 
@@ -54,6 +56,12 @@ public:
     }
 
 };
+
+inline Point operator-(const Point &lhs, const Point &rhs) {
+    Point out = lhs;
+    out -= rhs;
+    return out;
+}
 
 inline bool operator==(const Point &lhs, const Point &rhs) {
     if (lhs.dimension() != rhs.dimension())

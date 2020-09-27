@@ -35,4 +35,13 @@ double Point::power(const Multi_index &exponent) const {
     return value_out;
 }
 
+double Point::vector_length() const {
+    double sum = 0;
+    for (auto term : value) {
+        sum += term * term;
+    }
+
+    return sqrt(sum);
+}
+
 
