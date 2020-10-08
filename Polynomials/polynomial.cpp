@@ -183,7 +183,7 @@ void Polynomial::subtract_multiply(double scalar, const Polynomial &poly_in) {
 void Polynomial::clear_zero_terms() {
     erase_if(coefficients, [](const auto &item) {
         auto const&[coefficient, value] = item;
-        return fabs(value) < d_polynomial_coefficient_tol;
+        return fabs(value) < 0.1 * d_polynomial_coefficient_tol;
     });
 }
 

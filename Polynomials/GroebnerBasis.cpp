@@ -3,11 +3,12 @@
 //
 
 #include "GroebnerBasis.h"
+#include <iostream>
 
 using namespace absl;
 using namespace std;
 
-bool turn_on_debugging = false;
+bool turn_on_debugging = true;
 
 GroebnerBasis::GroebnerBasis(btree_map<Multi_index, unique_ptr<Polynomial>> &errors) {
     groebner_list = {};
@@ -55,13 +56,24 @@ Polynomial GroebnerBasis::divided_unreduced(const Polynomial &poly_in) const {
 
 Polynomial GroebnerBasis::divided(const Polynomial &poly_in) const {
     Polynomial remainder(poly_in);
+    bool done = false;
 
-    for (auto g = groebner_list.rbegin(); g != groebner_list.rend(); g++) {
-        remainder = remainder.divided_by(*g->second);
+    while (!done) {
+        done = true;
+        for (auto g = groebner_list.rbegin(); g != groebner_list.rend(); g++) {
+            Polynomial copy(remainder);
+            remainder = remainder.divided_by(*g->second);
+            if (!(copy == remainder)) {
+                done = false;
+            }
+        }
     }
 
     if (turn_on_debugging) {
         remainder.describe();
+        if (!remainder.is_zero()) {
+            cout << remainder.get_description() << "\n";
+        }
     }
     return remainder;
 }
@@ -108,8 +120,14 @@ Polynomial GroebnerBasis::s_polynomial(const Criteria &criteria) {
     Polynomial second(*input_list[criteria.second]);
     monomial_term first_term = first.leading_term();
     monomial_term second_term = second.leading_term();
-    Multi_index first_adjustment = criteria.lcm - first_term.exponent;
-    Multi_index second_adjustment = criteria.lcm - second_term.exponent;
+    Multi_index first_adjustment, second_adjustment;
+    try {
+        first_adjustment = criteria.lcm - first_term.exponent;
+        second_adjustment = criteria.lcm - second_term.exponent;
+    } catch (std::range_error &e) {
+        // This is a tolerancing error...
+        return Polynomial();
+    }
 
     first = first.multiply_by_monomial(first_adjustment, 1.0);
     second = second.multiply_by_monomial(second_adjustment, 1.0);
@@ -123,8 +141,16 @@ void GroebnerBasis::reduce() {
         *poly = divided(*poly);
         if (!poly->is_zero()) {
             monomial_term lt = poly->leading_term();
+            *poly *= 1.0 / lt.coefficient;
+#ifndef NDEBUG
             poly->describe();
-            assert(groebner_list.count(lt.exponent) == 0);
+            if (groebner_list.count(lt.exponent) > 0) {
+                cout << "Double Monomial add\n";
+                cout << "Existing: " << groebner_list[lt.exponent]->get_description() << "\n";
+                cout << "New: " << poly->get_description() << "\n";
+                assert(true);
+            }
+#endif
             groebner_list[lt.exponent] = make_unique<Polynomial>(*poly);
         }
     }

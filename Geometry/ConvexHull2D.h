@@ -9,7 +9,7 @@
 #include <vector>
 
 using namespace std;
-#define convex_hull_tolerance 0.000000001
+#define convex_hull_tolerance 0.00000000001
 
 class ConvexHull2D {
 private:

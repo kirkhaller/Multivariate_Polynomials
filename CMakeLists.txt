@@ -21,7 +21,8 @@ add_library(Multivariate_Polynomials
         Polynomials/Lagrange.h
         Polynomials/GroebnerBasis.cpp Polynomials/GroebnerBasis.h
         Geometry/transform.cpp Geometry/transform.h
-        Geometry/ConvexHull2D.cpp Geometry/ConvexHull2D.h)
+        Geometry/ConvexHull2D.cpp Geometry/ConvexHull2D.h
+        utilities/analysis.cpp utilities/analysis.h)
 
 # 'Google_Tests_run' is the target name
 add_executable(Google_Tests_run
@@ -29,6 +30,9 @@ add_executable(Google_Tests_run
         GoogleTest/MultiindexTests.cpp
         GoogleTest/PolynomialTests.cpp
         GoogleTest/LinearInterpolationProblemTests.cpp
-        GoogleTest/GroebnerTest.cpp GoogleTest/ConvexHullTest.cpp)
+        GoogleTest/GroebnerTest.cpp
+        GoogleTest/ConvexHullTest.cpp
+        GoogleTest/analysis_test.cpp)
 
-target_link_libraries(Google_Tests_run gtest gtest_main Multivariate_Polynomials absl::strings)
+target_link_libraries(Google_Tests_run gtest gtest_main Multivariate_Polynomials
+        absl::strings absl::random_random)

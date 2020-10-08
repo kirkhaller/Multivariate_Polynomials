@@ -33,13 +33,14 @@ enum LagrangeSelector_e {
  */
 
 class LinearInterpolationProblem {
-private:
+public:
     // Point processing order matters
     vector<unique_ptr<Lagrange>> lagranges;
+    error_map_t errors;
 
+private:
     LagrangeSelector_e selector_type = x_bias;
     unique_ptr<LagrangeSelector> selector;
-    error_map_t errors;
     int max_error_degree;
 
     // To address tolerance concerns, will keep data within [-1,1]^d cube.

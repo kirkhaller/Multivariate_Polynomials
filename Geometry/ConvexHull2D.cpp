@@ -18,13 +18,13 @@ bool ConvexHull2D::is_left(const Point &origin, const Point &end_in, const Point
 
     double value = cross_product(fixed, test);
 
-    if (value > convex_hull_tolerance) {
+    if (value > 0) {
         return true;
-    } else if (value < -convex_hull_tolerance) {
+    } else if (value < 0) {
         return false;
     }
 
-    return test.vector_length() > fixed.vector_length();
+    return test.vector_length() >= fixed.vector_length();
 }
 
 bool ConvexHull2D::is_lower_right_of(const Point &origin, const Point &test) {

@@ -25,6 +25,7 @@ LinearInterpolationProblem::LinearInterpolationProblem(const vector<Point> &poin
         xform.apply(lagrange->point);
     }
 
+
     // add the errors
     if (!lagranges.empty()) {
         add_errors_to_degree(0);
@@ -32,6 +33,7 @@ LinearInterpolationProblem::LinearInterpolationProblem(const vector<Point> &poin
 
     // setup the selectors.
     set_selector_type(selector_type);
+
 }
 
 LinearInterpolationProblem::~LinearInterpolationProblem() {
@@ -78,16 +80,19 @@ void LinearInterpolationProblem::update_errors_for_lagrange(const Lagrange &new_
     }
 
 #ifndef NDEBUG
+    /*
     for (auto &error: errors) {
         double value = error.second->evaluate(new_lagrange.point);
         if (fabs(value) > d_polynomial_value_tol) {
             cout << "\nError for " << error.first.description() << " is " << value << ".\n";
         }
     }
+     */
 #endif
 }
 
 void LinearInterpolationProblem::set_selector_type(LagrangeSelector_e type_in) {
+
     selector_type = type_in;
 
     switch (selector_type) {
@@ -150,8 +155,8 @@ void LinearInterpolationProblem::solve() {
             lagrange->polynomial_ptr = selector->select_lagrange_for_point(lagrange->point, false);
             assert(lagrange->is_set());
 #ifndef NDEBUG
-            cout << "  Point: " << lagrange->point.description();
-            cout << "  New Lagrange: " << lagrange->get_polynomial()->describe() << '\n';
+            // cout << "  Point: " << lagrange->point.description();
+            // cout << "  New Lagrange: " << lagrange->get_polynomial()->describe() << '\n';
 #endif
             update_lagranges_for_new_lagrange(*lagrange);
             update_errors_for_lagrange(*lagrange);
