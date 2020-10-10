@@ -39,10 +39,6 @@ namespace {
         }
 
     protected:
-        Point *Point_Lookup(int row, int column) {
-            return &points[row * (max_rows + 1) + column];
-        }
-
         vector<Point> points;
         vector<Point> extra_points;
     };
@@ -89,7 +85,7 @@ namespace {
                         double(absl::Uniform(bitgen, -max_int, max_int)) / double(max_int)
                 );
             }
-            points.push_back(Point(interpolation_point));
+            points.emplace_back(interpolation_point);
             cout << "Point" << points.back().description() << "\n";
         }
 
