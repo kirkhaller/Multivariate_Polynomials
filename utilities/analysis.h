@@ -34,7 +34,7 @@ private:
     sample_scheme_e sample_scheme = RADIAL;
 
 public:
-    Analysis(const LinearInterpolationProblem &lip);
+    explicit Analysis(const LinearInterpolationProblem &lip);
 
     void print_data();
 
