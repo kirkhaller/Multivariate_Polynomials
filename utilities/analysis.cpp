@@ -20,15 +20,19 @@ Analysis::Analysis(const LinearInterpolationProblem &lip) {
     }
 
     dimension = lip.dimension();
-    if (sample_scheme == GRID) {
-        point_t point_template;
-        create_point_grid(dimension, samples_per_dim, point_template, &sample_locations);
-        if (dimension == 2) {
-            prune_2d();
-        }
-    } else if (sample_scheme == RADIAL) {
-        sample_point_lines();
+    point_t point_template;
+    switch (sample_scheme) {
+        case GRID:
+            create_point_grid(dimension, samples_per_dim, point_template, &sample_locations);
+            if (dimension == 2) {
+                prune_2d();
+            }
+            break;
+        case RADIAL:
+            sample_point_lines();
+            break;
     }
+
 
     data.reserve(lip.errors.size());
     for (auto &error: lip.errors) {
