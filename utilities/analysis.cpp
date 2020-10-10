@@ -14,13 +14,21 @@
 
 Analysis::Analysis(const LinearInterpolationProblem &lip) {
 // Set up sample locations
-    dimension = lip.dimension();
-    point_t point_template;
-    create_point_grid(dimension, samples_per_dim, point_template, &sample_locations);
-    if (dimension == 2) {
-        prune_2d(lip);
+    interpolation_points.reserve(lip.lagranges.size());
+    for (auto &lagrange: lip.lagranges) {
+        interpolation_points.push_back(lagrange->point);
     }
-    cell_size = pow((2.0 / double(samples_per_dim)), dimension);
+
+    dimension = lip.dimension();
+    if (sample_scheme == GRID) {
+        point_t point_template;
+        create_point_grid(dimension, samples_per_dim, point_template, &sample_locations);
+        if (dimension == 2) {
+            prune_2d();
+        }
+    } else if (sample_scheme == RADIAL) {
+        sample_point_lines();
+    }
 
     data.reserve(lip.errors.size());
     for (auto &error: lip.errors) {
@@ -34,12 +42,8 @@ Analysis::Analysis(const LinearInterpolationProblem &lip) {
     evaluate_polynomials();
 }
 
-void Analysis::prune_2d(const LinearInterpolationProblem &lip) {
+void Analysis::prune_2d() {
     assert(dimension == 2);
-    vector<Point> interpolation_points;
-    for (auto &lagrange : lip.lagranges) {
-        interpolation_points.push_back(Point(lagrange->point));
-    }
 
     ConvexHull2D cv(interpolation_points);
 
@@ -50,21 +54,31 @@ void Analysis::prune_2d(const LinearInterpolationProblem &lip) {
 
 
 void Analysis::evaluate_points(analysis_data &poly_data, vector<Point> &samples) {
+    if (samples.size() == 0) {
+        return;
+    }
+
     vector<double> values;
     values.reserve(samples.size());
     for (auto &point : samples) {
         double value = poly_data.error.evaluate(point);
-        values.push_back(value);
+        values.push_back(fabs(value));
     }
-    auto p = max_element(values.begin(), values.end());
-    poly_data.max = *p;
-    p = min_element(values.begin(), values.end());
-    poly_data.min = *p;
+    sort(values.begin(), values.end());
+    int mid = int(values.size() / 2);
+    if (values.size() % 2 == 0) {
+        poly_data.median = (values[mid - 1] + values[mid]) / 2;
+    } else {
+        poly_data.median = values[mid];
+    }
 
-    poly_data.l1 = accumulate(values.begin(), values.end(),
-                              double(0.0), [](double a, double b) { return a + fabs(b); });
-    poly_data.l2 = accumulate(values.begin(), values.end(),
-                              double(0.0), [](double a, double b) { return a + b * b; });
+    poly_data.mean = accumulate(values.begin(), values.end(),
+                                double(0.0), [](double a, double b) { return a + b; }) / values.size();
+    poly_data.standard_deviation = sqrt(accumulate(values.begin(), values.end(),
+                                                   double(0.0), [&](double a, double b) {
+                double diff = b - poly_data.median;
+                return a + diff * diff;
+            }));
 }
 
 
@@ -77,18 +91,38 @@ void Analysis::evaluate_polynomials() {
     for (auto &poly_thread : threads) {
         poly_thread.join();
     }
-    for (auto &poly_data : data) {
-        poly_data.l1 *= cell_size;
-        poly_data.l2 = sqrt(cell_size * poly_data.l2);
-    }
 }
 
 void Analysis::print_data() {
     cout << "\n Polynomial Error Analysis \n";
+    double max_median = 0;
+    double max_mean = 0;
+    double max_stddev = 0;
     for (auto &poly_data : data) {
+        max_median = max(max_median, poly_data.median);
+        max_mean = max(max_mean, poly_data.mean);
+        max_stddev = max(max_stddev, poly_data.standard_deviation);
         cout << "\nError: " << poly_data.error.get_description() << "\n";
-        cout << poly_data.index.description() << " max: " << poly_data.max << " min: " << poly_data.min
-             << " L1: " << poly_data.l1 << " L2: " << poly_data.l2 << "\n";
+        cout << poly_data.index.description() << " median: " << poly_data.median << " mean: " << poly_data.mean
+             << " Standard Deviation: " << poly_data.standard_deviation << "\n";
+    }
+    cout << "\nMax Median: " << max_median
+         << " Max Mean: " << max_mean
+         << " Max Standard Deviation: " << max_stddev << "\n";
+}
+
+void Analysis::sample_point_lines() {
+    int num_samples = 4;
+    double denom_samples = 4.0 * double(num_samples);
+    for (auto &point : interpolation_points) {
+        for (auto &other_point : interpolation_points) {
+            if (point != other_point) {
+                for (int sample_number = 1; sample_number < num_samples; sample_number++) {
+                    sample_locations.push_back(point.point_on_line(other_point,
+                                                                   double(sample_number) / denom_samples));
+                }
+            }
+        }
     }
 }
 

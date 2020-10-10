@@ -44,4 +44,14 @@ double Point::vector_length() const {
     return sqrt(sum);
 }
 
+Point Point::point_on_line(const Point &other_end, double scale) const {
+    point_t point_vec_out;
+    double my_scale = 1.0 - scale;
+    for (unsigned long dim = 0; dim < dimension(); dim++) {
+        point_vec_out.push_back(my_scale * get_value(dim) + scale * other_end.get_value(dim));
+    }
+
+    return Point(point_vec_out);
+}
+
 

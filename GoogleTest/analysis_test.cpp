@@ -77,15 +77,19 @@ namespace {
 
 
     TEST_F(AnalysisTest, TestFullRandomAll) {
-        int count = 70;
+        int count = 50;
         int max_int = INT32_MAX;
+        int dimension = 2;
         absl::BitGen bitgen;
         vector<Point> points;
         for (int loop = 0; loop < count; loop++) {
-            double x = double(absl::Uniform(bitgen, -max_int, max_int)) / double(max_int);
-            double y = double(absl::Uniform(bitgen, -max_int, max_int)) / double(max_int);
-            double z = double(absl::Uniform(bitgen, -max_int, max_int)) / double(max_int);
-            points.push_back(Point({x, y, z}));
+            point_t interpolation_point;
+            for (int dim = 0; dim < dimension; dim++) {
+                interpolation_point.push_back(
+                        double(absl::Uniform(bitgen, -max_int, max_int)) / double(max_int)
+                );
+            }
+            points.push_back(Point(interpolation_point));
             cout << "Point" << points.back().description() << "\n";
         }
 

@@ -13,21 +13,25 @@
 
 using namespace std;
 
+enum sample_scheme_e {
+    GRID, RADIAL
+};
+
 struct analysis_data {
     Multi_index index;
     Polynomial error;
-    double min = 0;
-    double max = 0;
-    double l1 = 0;
-    double l2 = 0;
+    double median = 0;
+    double mean = 0;
+    double standard_deviation = 0;
 };
 
 class Analysis {
 private:
     vector<analysis_data> data;
+    vector<Point> interpolation_points;
     vector<Point> sample_locations;
     int dimension;
-    double cell_size;
+    sample_scheme_e sample_scheme = RADIAL;
 
 public:
     Analysis(const LinearInterpolationProblem &lip);
@@ -35,7 +39,9 @@ public:
     void print_data();
 
 private:
-    void prune_2d(const LinearInterpolationProblem &lip);
+    void prune_2d();
+
+    void sample_point_lines();
 
     static void evaluate_points(analysis_data &poly_data, vector<Point> &samples);
 

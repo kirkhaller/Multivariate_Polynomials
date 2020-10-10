@@ -35,6 +35,8 @@ public:
 
     double vector_length() const;
 
+    Point point_on_line(const Point &other_end, double scale) const;
+
     Point &operator-=(const Point &rhs) {
         assert(dimension() == rhs.dimension());
 
