@@ -2,7 +2,7 @@
 // Created by Kirk Haller on 9/18/20.
 //
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 #include "../Polynomials/GroebnerBasis.h"
 
 TEST(groebner_test, empty_set) {

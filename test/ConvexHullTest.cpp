@@ -3,7 +3,7 @@
 //
 
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 #include "../Geometry/point.h"
 #include "../Geometry/ConvexHull2D.h"
 #include <vector>

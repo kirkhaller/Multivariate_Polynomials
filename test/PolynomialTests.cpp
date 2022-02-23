@@ -2,7 +2,7 @@
 // Created by Kirk Haller on 7/10/20.
 //
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 #include "../Geometry/point.h"
 #include "../Polynomials/polynomial.h"
 

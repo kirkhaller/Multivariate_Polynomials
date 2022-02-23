@@ -4,7 +4,7 @@
 
 
 #include "absl/random/random.h"
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 #include "../Geometry/point.h"
 #include "../Polynomials/LinearInterpolationProblem.h"
 #include "../utilities/analysis.h"

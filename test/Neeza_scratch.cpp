@@ -3,7 +3,7 @@
 //
 
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 #include <algorithm>
 #include "../Polynomials/Multiindex.h"
 #include "../Polynomials/polynomial.h"
