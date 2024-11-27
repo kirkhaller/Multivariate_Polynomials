@@ -18,16 +18,16 @@ namespace {
             points.reserve((max_rows + 1) * (max_columns + 1));
             for (int rows = 0; rows <= max_rows; rows++) {
                 for (int columns = 0; columns <= max_columns; columns++) {
-                    point_t point_vec = {2.0 * double(rows) / max_rows - 1.0,
-                                         2.0 * double(columns) / max_columns - 1.0};
+                    point_t point_vec = {2.0 * static_cast<double>(rows) / max_rows - 1.0,
+                                         2.0 * static_cast<double>(columns) / max_columns - 1.0};
                     points.emplace_back(point_vec);
                 }
             }
             extra_points.reserve(max_rows * max_columns);
             for (int rows = 0; rows < max_rows; rows++) {
                 for (int columns = 0; columns < max_columns; columns++) {
-                    point_t point_vec = {(2.0 * double(rows) + 0.5) / max_rows - 1.0,
-                                         (2.0 * double(columns) + 0.5) / max_columns - 1.0};
+                    point_t point_vec = {(2.0 * static_cast<double>(rows) + 0.5) / max_rows - 1.0,
+                                         (2.0 * static_cast<double>(columns) + 0.5) / max_columns - 1.0};
                     extra_points.emplace_back(point_vec);
                 }
             }
