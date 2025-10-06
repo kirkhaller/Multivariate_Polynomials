@@ -58,7 +58,7 @@ void Analysis::prune_2d() {
 
 
 void Analysis::evaluate_points(analysis_data &poly_data, vector<Point> &samples) {
-    if (samples.size() == 0) {
+    if (samples.empty()) {
         return;
     }
 
@@ -90,7 +90,7 @@ void Analysis::evaluate_polynomials() {
     vector<thread> threads;
     threads.reserve(data.size());
     for (auto &poly_data : data) {
-        threads.push_back(thread(evaluate_points, ref(poly_data), ref(sample_locations)));
+        threads.emplace_back(evaluate_points, ref(poly_data), ref(sample_locations));
     }
     for (auto &poly_thread : threads) {
         poly_thread.join();

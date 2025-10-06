@@ -17,7 +17,7 @@ private:
     vector<Point> convex_hull;
 
 public:
-    ConvexHull2D(vector<Point> &input_points);
+    ConvexHull2D(const vector<Point> &input_points);
 
     bool point_in_convex_hull(const Point &point) const;
 

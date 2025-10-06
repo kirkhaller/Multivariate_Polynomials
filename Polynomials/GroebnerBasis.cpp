@@ -125,8 +125,8 @@ Polynomial GroebnerBasis::s_polynomial(const Criteria &criteria) {
         first_adjustment = criteria.lcm - first_term.exponent;
         second_adjustment = criteria.lcm - second_term.exponent;
     } catch (std::range_error &e) {
-        // This is a tolerancing error...
-        return Polynomial();
+        // This is a tolerance error...
+        return {};
     }
 
     first = first.multiply_by_monomial(first_adjustment, 1.0);

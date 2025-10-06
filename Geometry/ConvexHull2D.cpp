@@ -4,7 +4,7 @@
 
 #include "ConvexHull2D.h"
 
-ConvexHull2D::ConvexHull2D(vector<Point> &input_points) {
+ConvexHull2D::ConvexHull2D(const vector<Point> &input_points) {
     assert(input_points.empty() || input_points.begin()->dimension() == 2);
 
     working_list = input_points;
@@ -56,7 +56,7 @@ void ConvexHull2D::sort_by_angle() {
 
     Point origin = working_list.back();
     sort(working_list.begin(), working_list.end() - 1,
-         [&](Point &a, Point &b) { return !is_left(origin, a, b); });
+         [&](const Point &a, const Point &b) { return !is_left(origin, a, b); });
 }
 
 void ConvexHull2D::compute_convex_hull() {

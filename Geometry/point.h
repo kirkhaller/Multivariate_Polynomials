@@ -33,9 +33,9 @@ public:
 
     [[nodiscard]] double power(const Multi_index &exponent) const;
 
-    double vector_length() const;
+    [[nodiscard]] double vector_length() const;
 
-    Point point_on_line(const Point &other_end, double scale) const;
+    [[nodiscard]] Point point_on_line(const Point &other_end, double scale) const;
 
     Point &operator-=(const Point &rhs) {
         assert(dimension() == rhs.dimension());

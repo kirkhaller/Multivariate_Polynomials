@@ -31,7 +31,7 @@ LinearInterpolationProblem::LinearInterpolationProblem(const vector<Point> &poin
         add_errors_to_degree(0);
     }
 
-    // setup the selectors.
+    // set up the selectors.
     set_selector_type(selector_type);
 
 }

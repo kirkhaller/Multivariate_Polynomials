@@ -42,7 +42,7 @@ Polynomial Polynomial::multiply_by_monomial(Multi_index &index, double coefficie
 
 Polynomial Polynomial::derivative(int direction) const {
     if (get_degree() == 0)
-        return Polynomial();
+        return {};
 
     Polynomial derivative;
     Multi_index dir(coefficients.end()->first.dimension(), direction);
