@@ -5,13 +5,13 @@
 #ifndef MULTIVARIATE_POLYNOMIALS_GROEBNERBASIS_H
 #define MULTIVARIATE_POLYNOMIALS_GROEBNERBASIS_H
 
-#include "absl/container/btree_map.h"
-#include "absl/container/btree_set.h"
+
+#include <map>
 #include "polynomial.h"
+#include <set>
 #include <vector>
 
 
-using namespace absl;
 using namespace std;
 //
 
@@ -50,18 +50,18 @@ inline bool operator==(const Criteria &lhs, const Criteria &rhs) {
 // Computes a reduce groebner basis for ideal generate by the polynomials input. (see, e.g, Cox, Little and Shea)
 // This is not a general Groebner basis solver, but optimized for the case of interpolation.
 // I.e., the ideal of polynomials that vanish on a finite point set.
-#define leading_term_polynomial_map_t absl::btree_map<Multi_index, unique_ptr<Polynomial>>
+#define leading_term_polynomial_map_t map<Multi_index, unique_ptr<Polynomial>>
 
 class GroebnerBasis {
 private:
     vector<shared_ptr<Polynomial>> input_list;
-    btree_set<Criteria> leading_term_check;
+    set<Criteria> leading_term_check;
 
 public:
     leading_term_polynomial_map_t groebner_list;
 
 public:
-    explicit GroebnerBasis(btree_map<Multi_index, unique_ptr<Polynomial>> &errors);
+    explicit GroebnerBasis(map<Multi_index, unique_ptr<Polynomial>> &errors);
 
     void add_new_polynomial(const shared_ptr<Polynomial> &poly);
 

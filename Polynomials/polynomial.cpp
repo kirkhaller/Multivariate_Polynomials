@@ -2,7 +2,7 @@
 // Created by Kirk Haller on 7/9/20.
 //
 
-#include "absl/strings/string_view.h"
+#include <string>
 #include "polynomial.h"
 #include "../utilities/utilities.h"
 
@@ -150,7 +150,7 @@ monomial_term Polynomial::leading_term() const {
     return term_out;
 }
 
-absl::string_view Polynomial::describe() {
+std::string_view Polynomial::describe() {
     std::string connector;
     description = "";
 
@@ -181,7 +181,7 @@ void Polynomial::subtract_multiply(double scalar, const Polynomial &poly_in) {
 }
 
 void Polynomial::clear_zero_terms() {
-    erase_if(coefficients, [](const auto &item) {
+    std::erase_if(coefficients, [](const auto &item) {
         auto const&[coefficient, value] = item;
         return fabs(value) < 0.1 * d_polynomial_coefficient_tol;
     });

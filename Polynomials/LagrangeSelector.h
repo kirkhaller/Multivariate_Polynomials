@@ -5,9 +5,8 @@
 #ifndef MULTIVARIATE_POLYNOMIALS_LAGRANGESELECTOR_H
 #define MULTIVARIATE_POLYNOMIALS_LAGRANGESELECTOR_H
 
-#include "absl/container/btree_map.h"
+#include <map>
 #include "GroebnerBasis.h"
-#include "Lagrange.h"
 #include "Multiindex.h"
 #include "../Geometry/point.h"
 #include "polynomial.h"
@@ -15,10 +14,9 @@
 // LagrangeSelector would be a protocol in a smalltalk type language (java, objective-c, swift),
 // But we will use subclasses to get a similar design pattern
 
-using namespace absl;
 using namespace std;
 
-#define leading_term_polynomial_map_t absl::btree_map<Multi_index, unique_ptr<Polynomial>>
+#define leading_term_polynomial_map_t map<Multi_index, unique_ptr<Polynomial>>
 
 class LagrangeSelector {
 

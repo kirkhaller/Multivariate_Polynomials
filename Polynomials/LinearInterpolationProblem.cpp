@@ -11,7 +11,7 @@
 LinearInterpolationProblem::LinearInterpolationProblem(const vector<Point> &points_in) : max_error_degree(-1) {
 
     // Initialize backup data
-    backup_errors = {};
+    backup_errors = error_map_t();
 
     //setup lagrange data, capturing points.
     //will also translate and scale into cube [-1.1]^d

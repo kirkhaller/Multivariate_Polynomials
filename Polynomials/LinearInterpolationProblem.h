@@ -5,25 +5,21 @@
 #ifndef MULTIVARIATE_POLYNOMIALS_LINEARINTERPOLATIONPROBLEM_H
 #define MULTIVARIATE_POLYNOMIALS_LINEARINTERPOLATIONPROBLEM_H
 
-#include "absl/container/btree_map.h"
-#include <cassert>
-#include "GroebnerBasis.h"
+#include <map>
 #include "Lagrange.h"
 #include "LagrangeSelector.h"
 #include "../Geometry/point.h"
 #include "polynomial.h"
 #include "../Geometry/transform.h"
-#include <utility>
 #include <vector>
 
-using namespace absl;
 using namespace std;
 
 enum LagrangeSelector_e {
     x_bias, least, hm
 };
 
-#define error_map_t btree_map<Multi_index, unique_ptr<Polynomial>>
+#define error_map_t map<Multi_index, unique_ptr<Polynomial>>
 
 /*
  * A linear interpolation problem in general takes a set of points with data, and a function space and returns a

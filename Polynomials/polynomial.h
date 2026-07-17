@@ -6,15 +6,15 @@
 #define MULTIVARIATE_POLYNOMIALS_POLYNOMIAL_H
 
 #include <string>
-#include "absl/container/btree_map.h"
-#include "absl/strings/string_view.h"
+#include <string_view>
+#include <map>
 #include "../utilities/kbnsum.h"
 #include "Multiindex.h"
 #include "../Geometry/point.h"
 
 
 #define d_polynomial_coefficient_tol 0.000000001
-#define coefficient_t absl::btree_map<Multi_index, double>
+#define coefficient_t std::map<Multi_index, double>
 
 struct monomial_term {
     Multi_index exponent;
@@ -85,7 +85,7 @@ public:
 
     [[nodiscard]] Polynomial derivative(int direction) const;
 
-    absl::string_view describe();
+    std::string_view describe();
 
     // returns the remainder, if quotient is wanted, it will be returned as argument.
     Polynomial divided_by(const Polynomial &poly_in, Polynomial *quotient = nullptr) const;
@@ -105,7 +105,7 @@ public:
 
     Polynomial &operator*=(double scale);
 
-    bool operator==(Polynomial &rhs) const;
+    bool operator==(Polynomial& rhs) const;
 
     // A structure to allow get/set using the bracket operator.
     // Thanks to: andreagriffini.com

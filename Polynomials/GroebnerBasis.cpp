@@ -5,13 +5,12 @@
 #include "GroebnerBasis.h"
 #include <iostream>
 
-using namespace absl;
 using namespace std;
 
 bool turn_on_debugging = true;
 
-GroebnerBasis::GroebnerBasis(btree_map<Multi_index, unique_ptr<Polynomial>> &errors) {
-    groebner_list = {};
+GroebnerBasis::GroebnerBasis(map<Multi_index, unique_ptr<Polynomial>> &errors) {
+    groebner_list = leading_term_polynomial_map_t();
 
     for (auto &error : errors) {
         shared_ptr<Polynomial> new_poly = make_shared<Polynomial>(*error.second);
@@ -63,7 +62,8 @@ Polynomial GroebnerBasis::divided(const Polynomial &poly_in) const {
         for (auto g = groebner_list.rbegin(); g != groebner_list.rend(); g++) {
             Polynomial copy(remainder);
             remainder = remainder.divided_by(*g->second);
-            if (!(copy == remainder)) {
+            bool is_done = remainder == copy;
+            if (!is_done) {
                 done = false;
             }
         }
