@@ -43,7 +43,7 @@ string StrJoin(const vector<string>& parts, const string& separator) {
 
 // Base implementation for splitting by a single character.
 // Always skips empty parts as per usage in this file.
-vector<string> StrSplitImpl(const string& text, char delimiter) {
+vector<string> StrSplit(const string& text, char delimiter) {
     vector<string> result;
     string token;
     stringstream ss(text);
@@ -57,7 +57,7 @@ vector<string> StrSplitImpl(const string& text, char delimiter) {
 
 // Base implementation for splitting by a string delimiter.
 // Always skips empty parts as per usage in this file.
-vector<string> StrSplitImpl(const string& text, const string& delimiter) {
+vector<string> StrSplit(const string& text, const string& delimiter) {
     vector<string> result;
     if (delimiter.empty()) {
         if (!text.empty()) {
@@ -80,15 +80,6 @@ vector<string> StrSplitImpl(const string& text, const string& delimiter) {
         result.push_back(last_token);
     }
     return result;
-}
-
-// Overloads to match the calling syntax in the file.
-vector<string> StrSplit(const string& text, char delimiter) {
-    return StrSplitImpl(text, delimiter);
-}
-
-vector<string> StrSplit(const string& text, const string& delimiter) {
-    return StrSplitImpl(text, delimiter);
 }
 
 // Overload for splitting by any character in a given set.
@@ -124,12 +115,18 @@ bool parse_multiindex_string(const string &string_in, m_index_t *exponent_out) {
     vector<string> working_string_vector;
     working_string_vector = StrSplit(string_in, ByAnyChar("(,)"));
     for (const auto &exponent_string : working_string_vector) {
-        char *endptr;
-        int exp_term = std::strtol(exponent_string.c_str(),&endptr, 10);
-        if (exp_term == 0 || *endptr != '\0' || (exp_term < 0 && exponent_string.find("-") == string::npos)) {
-            return false;
+        try {
+            size_t pos;
+            int exp_term = std::stoi(exponent_string, &pos);
+            if (pos != exponent_string.length()) {
+                return false; // The string was not fully converted
+            }
+            exponent_out->push_back(exp_term);
+        } catch (const std::invalid_argument& ia) {
+            return false; // The string is not a valid integer
+        } catch (const std::out_of_range& oor) {
+            return false; // The integer is out of range
         }
-        exponent_out->push_back(exp_term);
     }
 
     return true;
@@ -159,7 +156,7 @@ bool parse_polynomial_string(const string &string_in, coefficient_t *term_map_ou
     }
 
     //Break into terms: a coefficient, variable and exponent
-    working_string_vector = StrSplit(working_string, '+'); //TODO: Write a better predicate
+    working_string_vector = StrSplit(working_string, '+');
 
     //Process each term, and add to term_map_out
     vector<string> working_term_vector;
@@ -179,14 +176,16 @@ bool parse_polynomial_string(const string &string_in, coefficient_t *term_map_ou
             if (working_term_vector[0] == "-") {
                 coefficient = -1;
             } else {
-                char *endptr;
-                int exp_term = std::strtol(working_term_vector[0].c_str(),&endptr, 10);
-                if (exp_term != 0  && endptr != working_term_vector[0].c_str())
-                {
-                    coefficient = exp_term;
-                } else
-                {
-                    return false;
+                try {
+                    size_t pos;
+                    coefficient = std::stod(working_term_vector[0], &pos);
+                    if (pos != working_term_vector[0].length()) {
+                        return false; // The string was not fully converted
+                    }
+                } catch (const std::invalid_argument& ia) {
+                    return false; // The string is not a valid double
+                } catch (const std::out_of_range& oor) {
+                    return false; // The double is out of range
                 }
             }
         }
@@ -217,6 +216,3 @@ void create_point_grid(int dim, int samples_per_dim, point_t &point_template, st
     }
 
 }
-
-
-

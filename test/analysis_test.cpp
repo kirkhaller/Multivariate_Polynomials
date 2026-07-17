@@ -3,8 +3,8 @@
 //
 
 
-#include "absl/random/random.h"
 #include <gtest/gtest.h>
+#include <random>
 #include "../Geometry/point.h"
 #include "../Polynomials/LinearInterpolationProblem.h"
 #include "../utilities/analysis.h"
@@ -74,16 +74,15 @@ namespace {
 
     TEST_F(AnalysisTest, TestFullRandomAll) {
         int count = 50;
-        int max_int = INT32_MAX;
         int dimension = 2;
-        absl::BitGen bitgen;
+        std::random_device rd;
+        std::mt19937 bitgen(rd());
+        std::uniform_real_distribution<double> distrib(-1.0, 1.0);
         vector<Point> points;
         for (int loop = 0; loop < count; loop++) {
             point_t interpolation_point;
             for (int dim = 0; dim < dimension; dim++) {
-                interpolation_point.push_back(
-                        double(absl::Uniform(bitgen, -max_int, max_int)) / double(max_int)
-                );
+                interpolation_point.push_back(distrib(bitgen));
             }
             points.emplace_back(interpolation_point);
             cout << "Point" << points.back().description() << "\n";
@@ -109,12 +108,13 @@ namespace {
 
     TEST_F(AnalysisTest, TestHMRandom) {
         int count = 15;
-        int max_int = INT32_MAX;
-        absl::BitGen bitgen;
+        std::random_device rd;
+        std::mt19937 bitgen(rd());
+        std::uniform_real_distribution<double> distrib(-1.0, 1.0);
         vector<Point> points;
         for (int loop = 0; loop < count; loop++) {
-            double x = double(absl::Uniform(bitgen, -max_int, max_int)) / double(max_int);
-            double y = double(absl::Uniform(bitgen, -max_int, max_int)) / double(max_int);
+            double x = distrib(bitgen);
+            double y = distrib(bitgen);
             points.push_back(Point({x, y}));
             cout << "Point" << loop << ": (" << x << ", " << y << " )\n";
         }

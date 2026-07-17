@@ -6,14 +6,14 @@
 #include "../Polynomials/GroebnerBasis.h"
 
 TEST(groebner_test, empty_set) {
-    absl::btree_map<Multi_index, std::unique_ptr<Polynomial>> list_in = {};
+    leading_term_polynomial_map_t list_in = {};
     EXPECT_NO_FATAL_FAILURE(GroebnerBasis groebner(list_in));
 }
 
 TEST(groebner_test, one_polynomial) {
     Polynomial one("x^(0,0,0)");
     monomial_term lt = one.leading_term();
-    absl::btree_map<Multi_index, std::unique_ptr<Polynomial>> list_in = {};
+    leading_term_polynomial_map_t list_in = {};
     list_in.emplace(lt.exponent, std::make_unique<Polynomial>(&one));
     EXPECT_NO_FATAL_FAILURE(GroebnerBasis groebner(list_in));
 }
@@ -22,7 +22,7 @@ TEST(groebner_test, two_polynomial) {
     Polynomial one("x^(1,0,0) - x^(0,0,0)");
     Polynomial two("x^(0,1,0) - x^(0,0,0)");
     monomial_term lt_one = one.leading_term();
-    absl::btree_map<Multi_index, std::unique_ptr<Polynomial>> list_in = {};
+    leading_term_polynomial_map_t list_in = {};
     list_in.emplace(lt_one.exponent, std::make_unique<Polynomial>(&one));
     monomial_term lt_two = two.leading_term();
     list_in.emplace(lt_two.exponent, std::make_unique<Polynomial>(&two));
@@ -35,7 +35,7 @@ TEST(groeber_test, example_from_cox_little_oshea) {
     Polynomial one("x^(1,0,1) - x^(0,2,0)");
     Polynomial two("x^(3,0,0) - x^(0,0,2)");
     monomial_term lt_one = one.leading_term();
-    absl::btree_map<Multi_index, std::unique_ptr<Polynomial>> list_in = {};
+    leading_term_polynomial_map_t list_in = {};
     list_in.emplace(lt_one.exponent, std::make_unique<Polynomial>(&one));
     monomial_term lt_two = two.leading_term();
     list_in.emplace(lt_two.exponent, std::make_unique<Polynomial>(&two));
