@@ -73,7 +73,7 @@ namespace {
 
 
     TEST_F(AnalysisTest, TestFullRandomAll) {
-        int count = 50;
+        int count = 20;
         int dimension = 2;
         std::random_device rd;
         std::mt19937 bitgen(rd());

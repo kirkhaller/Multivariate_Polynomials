@@ -37,7 +37,7 @@ public:
         description = poly_in.description;
     }
 
-    explicit Polynomial(Polynomial *poly_in) {
+    explicit Polynomial(const Polynomial *poly_in) {
         assert(poly_in != nullptr);
         coefficients = poly_in->coefficients;
         describe();
@@ -121,7 +121,8 @@ public:
         }
 
         //This is the set operator
-        double &operator=(const double value) { // NOLINT(misc-unconventional-assign-operator)
+        double &operator=(const double value) const
+        { // NOLINT(misc-unconventional-assign-operator)
             return poly.set_coefficient(index, value);
         }
 
