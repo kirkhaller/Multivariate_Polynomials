@@ -50,7 +50,7 @@ private:
 public:
     // Will set up the interpolation problem, assumptions:
     //  - the points are unique (not checked, may fail).
-    //  - the points are of the same dimension (not check, will fail).
+    //  - the points are of the same dimension (not checked, will fail).
     // default solve mode is x-bias.
     explicit LinearInterpolationProblem(const vector<Point> &points_in);
 

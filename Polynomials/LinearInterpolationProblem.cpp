@@ -2,6 +2,7 @@
 // Created by Kirk Haller on 8/3/20.
 //
 
+#include <algorithm>
 #include <cassert>
 #include <cmath>
 #include <iostream>
@@ -10,21 +11,45 @@
 
 LinearInterpolationProblem::LinearInterpolationProblem(const vector<Point> &points_in) : max_error_degree(-1) {
 
+    // validate points are:
+    //    - not empty
+    //    - the same dimension
+    //    - Not repeated
+
+    if (points_in.empty()) // technically not a error condition
+        return;
+
+    const auto dimension = points_in[0].dimension();
+    for (const auto &point: points_in)
+    {
+        if (point.dimension() != dimension)
+            throw std::invalid_argument("Mismatched dimensions");
+    }
+
+    vector<Point> working_points = points_in;
+
+    xform.instantiate_from_points(working_points);
+
+    for (auto point: working_points) {
+        xform.apply(point);
+    }
+
+    // sort points,
+    ranges::sort(working_points, [](const Point& a, const Point& b)
+    {
+        double a_len = a.vector_length();
+        double b_len = b.vector_length();
+        return a_len > b_len;
+    });
+
     // Initialize backup data
     backup_errors = error_map_t();
 
     //setup lagrange data, capturing points.
     //will also translate and scale into cube [-1.1]^d
-    for (const auto &point: points_in) {
+    for (const auto &point: working_points) {
         lagranges.push_back(make_unique<Lagrange>(point));
     }
-
-    xform.instantiate_from_points(points_in);
-
-    for (auto &lagrange: lagranges) {
-        xform.apply(lagrange->point);
-    }
-
 
     // add the errors
     if (!lagranges.empty()) {
@@ -212,7 +237,7 @@ bool LinearInterpolationProblem::add_point(const Point &new_point, bool with_und
 }
 
 bool LinearInterpolationProblem::validate_results() const {
-    double scaled_tolerance = lagranges.size() * d_polynomial_value_tol;
+    const double scaled_tolerance = d_polynomial_value_tol * lagranges.size();
     double max_error = 0;
     double max_lagrange_error = 0;
     bool return_value = true;

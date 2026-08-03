@@ -4,12 +4,13 @@
 
 #include "GroebnerBasis.h"
 #include <iostream>
+#include <ranges>
 
 using namespace std;
 
-bool turn_on_debugging = true;
+static bool turn_on_debugging = false;
 
-GroebnerBasis::GroebnerBasis(map<Multi_index, unique_ptr<Polynomial>> &errors) {
+GroebnerBasis::GroebnerBasis(const map<Multi_index, unique_ptr<Polynomial>> &errors) {
     groebner_list = leading_term_polynomial_map_t();
 
     for (auto &error : errors) {
@@ -59,9 +60,9 @@ Polynomial GroebnerBasis::divided(const Polynomial &poly_in) const {
 
     while (!done) {
         done = true;
-        for (auto g = groebner_list.rbegin(); g != groebner_list.rend(); g++) {
+        for (const auto & g : std::views::reverse(groebner_list)) {
             Polynomial copy(remainder);
-            remainder = remainder.divided_by(*g->second);
+            remainder = remainder.divided_by(*g.second);
             bool is_done = remainder == copy;
             if (!is_done) {
                 done = false;
@@ -81,7 +82,7 @@ Polynomial GroebnerBasis::divided(const Polynomial &poly_in) const {
 void GroebnerBasis::solve() {
     while (!leading_term_check.empty()) {
         auto pop = leading_term_check.extract(leading_term_check.begin());
-        Criteria working_criteria = pop.value();
+        const Criteria& working_criteria = pop.value();
 
         if (!check_criteria(working_criteria)) {
             Polynomial s = s_polynomial(working_criteria);
@@ -115,7 +116,8 @@ bool GroebnerBasis::check_criteria(const Criteria &criteria) const {
     return false;
 }
 
-Polynomial GroebnerBasis::s_polynomial(const Criteria &criteria) {
+Polynomial GroebnerBasis::s_polynomial(const Criteria &criteria) const
+{
     Polynomial first(*input_list[criteria.first]);
     Polynomial second(*input_list[criteria.second]);
     monomial_term first_term = first.leading_term();
@@ -136,7 +138,7 @@ Polynomial GroebnerBasis::s_polynomial(const Criteria &criteria) {
 }
 
 void GroebnerBasis::reduce() {
-    sort(input_list.begin(), input_list.end(), polynomial_compare);
+    ranges::sort(input_list, polynomial_compare);
     for (auto &poly : input_list) {
         *poly = divided(*poly);
         if (!poly->is_zero()) {
@@ -144,7 +146,7 @@ void GroebnerBasis::reduce() {
             *poly *= 1.0 / lt.coefficient;
 #ifndef NDEBUG
             poly->describe();
-            if (groebner_list.count(lt.exponent) > 0) {
+            if (groebner_list.contains(lt.exponent)) {
                 cout << "Double Monomial add\n";
                 cout << "Existing: " << groebner_list[lt.exponent]->get_description() << "\n";
                 cout << "New: " << poly->get_description() << "\n";
@@ -156,8 +158,8 @@ void GroebnerBasis::reduce() {
     }
 }
 
-bool GroebnerBasis::polynomial_compare(shared_ptr<Polynomial> &poly1, shared_ptr<Polynomial> &poly2) {
-    Multi_index index1 = poly1->leading_term().exponent;
-    Multi_index index2 = poly2->leading_term().exponent;
+bool GroebnerBasis::polynomial_compare(const shared_ptr<Polynomial> &poly1, const shared_ptr<Polynomial> &poly2) {
+    const Multi_index index1 = poly1->leading_term().exponent;
+    const Multi_index index2 = poly2->leading_term().exponent;
     return index1 < index2;
 }

@@ -73,7 +73,7 @@ namespace {
 
 
     TEST_F(AnalysisTest, TestFullRandomAll) {
-        int count = 20;
+        int count = 22;
         int dimension = 2;
         std::random_device rd;
         std::mt19937 bitgen(rd());
@@ -103,6 +103,12 @@ namespace {
         Analysis test_analysis_least(test_lip);
         test_analysis_least.print_data();
 
+        EXPECT_NO_FATAL_FAILURE(test_lip.reset());
+        EXPECT_NO_FATAL_FAILURE(test_lip.set_selector_type(hm));
+        EXPECT_NO_FATAL_FAILURE(test_lip.solve());
+        EXPECT_TRUE(test_lip.validate_results());
+        Analysis test_analysis_hm(test_lip);
+        test_analysis_hm.print_data();
     }
 
 

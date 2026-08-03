@@ -61,7 +61,7 @@ public:
     leading_term_polynomial_map_t groebner_list;
 
 public:
-    explicit GroebnerBasis(map<Multi_index, unique_ptr<Polynomial>> &errors);
+    explicit GroebnerBasis(const map<Multi_index, unique_ptr<Polynomial>> &errors);
 
     void add_new_polynomial(const shared_ptr<Polynomial> &poly);
 
@@ -69,7 +69,7 @@ public:
 
     [[nodiscard]] Polynomial divided(const Polynomial &poly_in) const;
 
-    [[nodiscard]] Polynomial s_polynomial(const Criteria &criteria);
+    [[nodiscard]] Polynomial s_polynomial(const Criteria &criteria) const;
 
 private:
     [[nodiscard]] Polynomial divided_unreduced(const Polynomial &poly_in) const;
@@ -78,7 +78,7 @@ private:
 
     void reduce();
 
-    static bool polynomial_compare(shared_ptr<Polynomial> &poly1, shared_ptr<Polynomial> &poly2);
+    static bool polynomial_compare(const shared_ptr<Polynomial>& poly1, const shared_ptr<Polynomial>& poly2);
 };
 
 #endif //MULTIVARIATE_POLYNOMIALS_GROEBNERBASIS_H
