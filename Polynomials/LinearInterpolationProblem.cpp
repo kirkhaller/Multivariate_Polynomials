@@ -42,6 +42,15 @@ LinearInterpolationProblem::LinearInterpolationProblem(const vector<Point> &poin
         return a_len > b_len;
     });
 
+    // Validate that the points are not equal
+    for (size_t i = 0; i < working_points.size(); ++i) {
+        for (size_t j = i + 1; j < working_points.size(); ++j) {
+            if (working_points[i] == working_points[j]) {
+                throw std::invalid_argument("Duplicate points found in input.");
+            }
+        }
+    }
+
     // Initialize backup data
     backup_errors = error_map_t();
 
@@ -301,7 +310,3 @@ bool LinearInterpolationProblem::undo() {
     backup_errors.clear();
     return true;
 }
-
-
-
-
