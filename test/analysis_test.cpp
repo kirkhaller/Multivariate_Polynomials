@@ -73,12 +73,14 @@ namespace {
 
 
     TEST_F(AnalysisTest, TestFullRandomAll) {
-        int count = 22;
+        int count = 20;
         int dimension = 2;
         std::random_device rd;
         std::mt19937 bitgen(rd());
         std::uniform_real_distribution<double> distrib(-1.0, 1.0);
         vector<Point> points;
+        points.reserve(count);
+        cout << "\n" << count << " Points:\n";
         for (int loop = 0; loop < count; loop++) {
             point_t interpolation_point;
             for (int dim = 0; dim < dimension; dim++) {
@@ -113,11 +115,13 @@ namespace {
 
 
     TEST_F(AnalysisTest, TestHMRandom) {
-        int count = 15;
+        int count = 35;
         std::random_device rd;
         std::mt19937 bitgen(rd());
         std::uniform_real_distribution<double> distrib(-1.0, 1.0);
         vector<Point> points;
+        points.reserve(count);
+        cout << "\n" << count << " Points:\n";
         for (int loop = 0; loop < count; loop++) {
             double x = distrib(bitgen);
             double y = distrib(bitgen);

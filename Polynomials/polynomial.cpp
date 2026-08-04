@@ -119,7 +119,7 @@ Polynomial &Polynomial::operator*=(double value) {
     return *this;
 }
 
-bool Polynomial::operator==(Polynomial &rhs) const {
+bool Polynomial::operator==(const Polynomial &rhs) const {
     for (auto &term : coefficients) {
         if (fabs(rhs.get_coefficient(term.first) - term.second) > d_polynomial_coefficient_tol) {
             return false;

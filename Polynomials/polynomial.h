@@ -105,7 +105,7 @@ public:
 
     Polynomial &operator*=(double scale);
 
-    bool operator==(Polynomial& rhs) const;
+    bool operator==(const Polynomial& rhs) const;
 
     // A structure to allow get/set using the bracket operator.
     // Thanks to: andreagriffini.com
