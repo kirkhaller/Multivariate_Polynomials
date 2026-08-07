@@ -31,7 +31,7 @@ private:
     vector<Point> interpolation_points;
     vector<Point> sample_locations;
     int dimension;
-    sample_scheme_e sample_scheme = RADIAL;
+    sample_scheme_e sample_scheme = GRID;
 
 public:
     explicit Analysis(const LinearInterpolationProblem &lip);
@@ -43,7 +43,7 @@ private:
 
     void sample_point_lines();
 
-    static void evaluate_points(analysis_data &poly_data, vector<Point> &samples);
+    static void evaluate_points(analysis_data &poly_data, const vector<Point> &samples);
 
     void evaluate_polynomials();
 };

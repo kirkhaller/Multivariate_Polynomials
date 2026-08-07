@@ -149,7 +149,7 @@ void LinearInterpolationProblem::add_errors_to_degree(int degree) {
 
     if (degree > max_error_degree) {
         // Add error terms to minimum degree
-        int dimension = int(lagranges.begin()->get()->point.dimension());
+        int dimension = static_cast<int>(lagranges.begin()->get()->point.dimension());
         for (int d = max_error_degree + 1; d <= degree; d++) {
             auto collection_at_degree = compute_exponents_to_degree(d, dimension, true);
             for (auto &exponent: collection_at_degree) {

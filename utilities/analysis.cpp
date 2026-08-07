@@ -51,13 +51,13 @@ void Analysis::prune_2d() {
 
     ConvexHull2D cv(interpolation_points);
 
-    auto it = remove_if(sample_locations.begin(), sample_locations.end(),
-                        [&](const Point &point) { return !cv.point_in_convex_hull(point); });
+    auto it = ranges::remove_if(sample_locations,
+                                [&](const Point &point) { return !cv.point_in_convex_hull(point); }).begin();
     sample_locations.erase(it, sample_locations.end());
 }
 
 
-void Analysis::evaluate_points(analysis_data &poly_data, vector<Point> &samples) {
+void Analysis::evaluate_points(analysis_data &poly_data, const vector<Point> &samples) {
     if (samples.empty()) {
         return;
     }
@@ -68,8 +68,8 @@ void Analysis::evaluate_points(analysis_data &poly_data, vector<Point> &samples)
         double value = poly_data.error.evaluate(point);
         values.push_back(fabs(value));
     }
-    sort(values.begin(), values.end());
-    int mid = int(values.size() / 2);
+    ranges::sort(values);
+    int mid = static_cast<int>(values.size() / 2);
     if (values.size() % 2 == 0) {
         poly_data.median = (values[mid - 1] + values[mid]) / 2;
     } else {
@@ -77,9 +77,9 @@ void Analysis::evaluate_points(analysis_data &poly_data, vector<Point> &samples)
     }
 
     poly_data.mean = accumulate(values.begin(), values.end(),
-                                double(0.0), [](double a, double b) { return a + b; }) / values.size();
+                                static_cast<double>(0.0), [](double a, double b) { return a + b; }) / values.size();
     poly_data.standard_deviation = sqrt(accumulate(values.begin(), values.end(),
-                                                   double(0.0), [&](double a, double b) {
+                                                   static_cast<double>(0.0), [&](double a, double b) {
                 double diff = b - poly_data.median;
                 return a + diff * diff;
             }));
@@ -117,13 +117,13 @@ void Analysis::print_data() {
 
 void Analysis::sample_point_lines() {
     int num_samples = 4;
-    double denom_samples = 4.0 * double(num_samples);
+    double denom_samples = 4.0 * static_cast<double>(num_samples);
     for (auto &point : interpolation_points) {
         for (auto &other_point : interpolation_points) {
             if (point != other_point) {
                 for (int sample_number = 1; sample_number < num_samples; sample_number++) {
                     sample_locations.push_back(point.point_on_line(other_point,
-                                                                   double(sample_number) / denom_samples));
+                                                                   static_cast<double>(sample_number) / denom_samples));
                 }
             }
         }
